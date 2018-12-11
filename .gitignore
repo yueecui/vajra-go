@@ -8,5 +8,4 @@ backup
 /resources
 /Cache
 /Temp
-*.bat
 *.ipyb

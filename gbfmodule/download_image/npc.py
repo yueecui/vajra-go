@@ -10,7 +10,7 @@ RES_TABX_TITLE = 'Data:角色资源数据补充.tabx'
 RES_TABX_KEY = 'ID'
 
 IMG_CONFIG = [
-    {'name': '立绘', 'filename_prefix': 'zoom', 'sub_url': 'zoom', 'suffix': 'png', 'has_extra': True, 'skip_index': [], 'multi_element': True, 'skin': False, 'multi': True},
+    {'name': '立绘', 'filename_prefix': 'zoom', 'sub_url': 'zoom', 'suffix': 'png', 'has_extra': True, 'skip_index': [], 'multi_element': True, 'skin': False, 'multi': True, 'multi_allow_index': ['01']},
     {'name': '详情横图', 'filename_prefix': 'detail', 'sub_url': 'detail', 'suffix': 'png', 'has_extra': True, 'skip_index': [], 'multi_element': True, 'skin': False, 'multi': True},
     {'name': '横图标', 'filename_prefix': 'm', 'sub_url': 'm', 'suffix': 'jpg', 'has_extra': True, 'skip_index': [], 'multi_element': True, 'skin': False, 'multi': True},
     {'name': '方图标', 'filename_prefix': 's', 'sub_url': 's', 'suffix': 'jpg', 'has_extra': True, 'skip_index': [], 'multi_element': True, 'skin': False, 'multi': True},
