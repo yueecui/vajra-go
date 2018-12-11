@@ -1,0 +1,12 @@
+.idea
+__pycache__
+*.spec
+test.py
+backup
+/env
+/config.ini
+/resources
+/Cache
+/Temp
+*.bat
+*.ipyb
