@@ -9,7 +9,7 @@ def main():
 
     # 创建命令行参数解析器
     parser = argparse.ArgumentParser(description='GBF WIKI Helper(https://gbf.huijiwiki.com)',
-                                     epilog='Last Update: 2018-12-11')
+                                     epilog='Last Update: 2018-12-12')
     subparsers = parser.add_subparsers(title='sub modules')
 
     # 更新版本信息

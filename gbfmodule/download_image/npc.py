@@ -77,7 +77,7 @@ def npc(cfg):
 
                 img_base_name = '%d_%s' % (npc_id, index)
                 img_name_list = [img_base_name]
-                if config['multi'] and npc_info['multi_char'] > 0:
+                if config['multi'] and npc_info['char_count'] > 0:
                     # 检测是否为允许的key
                     multi_allow_index_list = config['multi_allow_index'] if 'multi_allow_index' in config else []
                     if len(multi_allow_index_list) > 0:
