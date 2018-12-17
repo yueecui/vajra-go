@@ -15,7 +15,7 @@ def main():
     # 更新版本信息
     extract_parser = subparsers.add_parser('image', help='download all image')
     extract_parser.add_argument('img_type', type=str)
-    extract_parser.set_defaults(callback=download_all_image)
+    extract_parser.set_defaults(callback=download_image)
 
     # 获取解析后的参数
     args = parser.parse_args()

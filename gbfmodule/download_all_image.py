@@ -4,13 +4,13 @@ from huijiWiki import HuijiWiki
 
 DOWNLOAD_TYPE = {
     'npc': npc,
-
+    'skill': skill,
 }
 
 
-def download_all_image(cfg, args):
+def download_image(cfg, args):
     cfg['wiki'] = HuijiWiki('gbf')
-    cfg['base_url'] = 'http://game-a.granbluefantasy.jp/assets/img/sp/assets/'
+    cfg['base_url'] = 'http://game-a.granbluefantasy.jp/assets/img/sp/'
 
     if args.img_type == 'all':
         for img_type, download_fun in DOWNLOAD_TYPE.items():

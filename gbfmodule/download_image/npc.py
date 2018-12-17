@@ -1,6 +1,7 @@
 from huijiWikiTabx import HuijiWikiTabx
 from danteng_downloader import Downloader
-from danteng_lib import log, read_file
+from danteng_lib import log
+from ..util import get_skip_list
 import os
 
 TABX_TITLE = 'Data:角色列表.tabx'
@@ -23,7 +24,6 @@ IMG_CONFIG = [
     {'name': '皮肤方图标', 'filename_prefix': 'skin_s', 'folder': 'skin', 'sub_url': 's/skin', 'suffix': 'jpg', 'has_extra': True, 'skip_index': [], 'multi_element': False, 'skin': True, 'multi': True},
     {'name': '皮肤编成图标', 'filename_prefix': 'skin_f', 'folder': 'skin', 'sub_url': 'f/skin', 'suffix': 'jpg', 'has_extra': True, 'skip_index': [], 'multi_element': False, 'skin': True, 'multi': True},
 ]
-DOWNLOAD_TYPE = 'npc'
 
 
 def npc(cfg):
@@ -48,13 +48,13 @@ def npc(cfg):
         if 'skip_list' in cfg['OPTION']:
             skip_list_filename = cfg['OPTION']['skip_list']
 
-    # 读取跳过列表
+    # 配置下载器
     skip_list = get_skip_list(skip_list_filename)
 
     downloader = Downloader()
     downloader.set_try_count(retry_times)
 
-    npc_base_url = cfg['base_url'] + DOWNLOAD_TYPE
+    npc_base_url = cfg['base_url'] + 'assets/npc'
 
     for npc_id, npc_info in tabx:
         # 生成需要下载的list
@@ -144,11 +144,3 @@ def npc(cfg):
                 else:
                     downloader.download_multi_copies(work_info['url'], [work_info['path']])
         downloader.wait_threads()
-
-
-def get_skip_list(skip_list_filename):
-    content, result = read_file(skip_list_filename)
-    if not result:
-        return []
-    else:
-        return content.split('\n')

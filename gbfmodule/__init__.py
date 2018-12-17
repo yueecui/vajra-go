@@ -1,1 +1,1 @@
-from .download_all_image import download_all_image
+from .download_all_image import download_image
