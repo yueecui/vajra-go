@@ -5,6 +5,7 @@ from huijiWiki import HuijiWiki
 DOWNLOAD_TYPE = {
     'npc': npc,
     'skill': skill,
+    'skin': skin,
 }
 
 
