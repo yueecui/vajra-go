@@ -125,7 +125,7 @@ def npc(cfg):
                     folder_name = config['folder'] if 'folder' in config else ''
                     save_filename = '%s_%s.%s' % (config["filename_prefix"], img_name, config["suffix"])
 
-                    save_path = os.path.join(cfg['PATH']['npc'], '%s_%s' % (str(npc_id), npc_info["name_chs"]), folder_name, save_filename)
+                    save_path = os.path.join(cfg['PATH']['npc'], str(npc_id), folder_name, save_filename)
                     save_new_path = os.path.join(cfg['PATH']['new'], folder_name, save_filename)
 
                     if os.path.exists(save_path):
