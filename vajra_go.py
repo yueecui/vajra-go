@@ -8,14 +8,20 @@ def main():
     cfg = config_loader('config.ini')
 
     # 创建命令行参数解析器
-    parser = argparse.ArgumentParser(description='GBF WIKI Helper(https://gbf.huijiwiki.com)',
-                                     epilog='Last Update: 2018-12-12')
+    parser = argparse.ArgumentParser(description='GBF WIKI Bot(https://gbf.huijiwiki.com)',
+                                     epilog='Last Update: 2019-3-1')
     subparsers = parser.add_subparsers(title='sub modules')
 
-    # 更新版本信息
+    # 下载图片信息
     extract_parser = subparsers.add_parser('image', help='download all image')
     extract_parser.add_argument('img_type', type=str)
-    extract_parser.set_defaults(callback=download_image)
+    extract_parser.set_defaults(callback=download_data_image)
+
+    # 抓取游戏数据
+    extract_parser = subparsers.add_parser('data', help='download game data')
+    extract_parser.add_argument('data_type', type=str)
+    extract_parser.set_defaults(callback=download_game_data)
+
 
     # 获取解析后的参数
     args = parser.parse_args()

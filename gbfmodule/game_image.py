@@ -1,4 +1,4 @@
-from .download_image import *
+from gbfmodule.image import *
 from huijiWiki import HuijiWiki
 
 
@@ -9,7 +9,7 @@ DOWNLOAD_TYPE = {
 }
 
 
-def download_image(cfg, args):
+def download_data_image(cfg, args):
     cfg['wiki'] = HuijiWiki('gbf')
     cfg['base_url'] = 'http://game-a.granbluefantasy.jp/assets/img/sp/'
 
