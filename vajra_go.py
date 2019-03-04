@@ -19,9 +19,8 @@ def main():
 
     # 抓取游戏数据
     extract_parser = subparsers.add_parser('data', help='download game data')
-    extract_parser.add_argument('data_type', type=str)
+    # extract_parser.add_argument('data_type', type=str)
     extract_parser.set_defaults(callback=download_game_data)
-
 
     # 获取解析后的参数
     args = parser.parse_args()

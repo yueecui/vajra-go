@@ -19,9 +19,8 @@ class GBFSim:
         self._cfg = cfg
         self._cookies = get_game_cookies(cfg)
         self._version = None
-        self._login()  # 登录游戏
-        self._generate_game_db()  # 根据本地数据生成数据统计
-        self._save_statistics()
+        self._game_db = {}
+        self._login()
 
     # GET 请求
     def _get(self, url, rtype=''):
@@ -73,40 +72,28 @@ class GBFSim:
         return headers
 
     # 初始化统计数据，能读取就读取，不能读取就生成
-    def _generate_game_db(self):
-        self._game_db = {}
+    def init_local_db(self):
         self._generate_weapon_stat()
         self._generate_summon_stat()
 
         game_db = self._game_db
 
-        # 从个人信息页获取图鉴数量上限
-        timestamp_a, timestamp_b = get_double_timestamp()
-        profile_url = f'{GAME_HOST}/rest/profile/achievement/{self._user_id}?_={timestamp_a}&t={timestamp_b}&uid={self._user_id}'
-        profile_json = json.loads(self._get(profile_url, rtype='get_api'))
-        temp_stat = {
-            'weapon': profile_json["archive"]["weapon_num"]["max"],
-            'summon': profile_json["archive"]["summon_num"]["max"],
-        }
-
         # 播报新数据信息
         new_msg = ''
         if game_db['weapon']['total'] > 0:
-            if game_db['weapon']['total'] == temp_stat["weapon"]:
+            if game_db['weapon']['total'] == game_db['new']["weapon"]:
                 new_msg = '（无新增）'
             else:
-                new_msg = '（新增 %d 个）' % (temp_stat["weapon"] - game_db['weapon']['total'])
-        log(f'当前总武器数量：{temp_stat["weapon"]}{new_msg}')
+                new_msg = '（本地差 %d 个）' % (game_db['new']["weapon"] - game_db['weapon']['total'])
+        log(f'当前总武器数量：{game_db["new"]["weapon"]}{new_msg}')
 
         new_msg = ''
         if game_db['summon']['total'] > 0:
-            if game_db['summon']['total'] == temp_stat["summon"]:
+            if game_db['summon']['total'] == game_db['new']["summon"]:
                 new_msg = '（无新增）'
             else:
-                new_msg = '（新增 %d 个）' % (temp_stat["summon"] - game_db['summon']['total'])
-        log(f'当前总召唤石数量：{temp_stat["summon"]}{new_msg}')
-
-        game_db['new'] = temp_stat
+                new_msg = '（本地差 %d 个）' % (game_db['new']["summon"] - game_db['summon']['total'])
+        log(f'当前总召唤石数量：{game_db["new"]["summon"]}{new_msg}')
 
     # 将当前状态保存
     def _save_statistics(self):
@@ -224,6 +211,16 @@ class GBFSim:
             log(f'使用ID为{user_id}的账号登录')
         self._user_id = user_id
 
+        # 获取当前武器和召唤石数量
+        # 从个人信息页获取图鉴数量上限
+        timestamp_a, timestamp_b = get_double_timestamp()
+        profile_url = f'{GAME_HOST}/rest/profile/achievement/{self._user_id}?_={timestamp_a}&t={timestamp_b}&uid={self._user_id}'
+        profile_json = json.loads(self._get(profile_url, rtype='get_api'))
+        self._game_db['new'] = {
+            'weapon': profile_json["archive"]["weapon_num"]["max"],
+            'summon': profile_json["archive"]["summon_num"]["max"],
+        }
+
     def get_user_id(self):
         return self._user_id
 
@@ -232,6 +229,7 @@ class GBFSim:
             return 0
         result = self._set_language(lang)
         if result['status_code'] == 204:
+            self._lang = lang
             return 1
         else:
             raise Exception('切换语言时出错：%s' % result['status_code'])
@@ -239,6 +237,14 @@ class GBFSim:
     # 下载武器数据
     def download_weapon_data(self):
         # 切语言到日文
+        self._download_new_weapon_data()
+        if self._cfg['OPTION']['download_miss_weapon'] == 'yes':
+            self._download_miss_weapon_data()
+        # 下载需要的英文内容
+        self._download_weapon_data_en()
+
+    def _download_new_weapon_data(self):
+        # 抓取日语游戏数据
         self.set_language(1)
 
         # 尝试获取的索引深度
@@ -265,20 +271,9 @@ class GBFSim:
         weapon_db = self._game_db['weapon']
         guess_record = weapon_db['record']
 
-        # # 从缺失里尝试再抓取一遍
-        # for type_id_int, weapon_name in WEAPON_TYPE_MAP.items():
-        #     type_id = str(type_id_int)
-        #     for rarity_id_int in WEAPON_RARITY_ID_LIST:
-        #         rarity_id = str(rarity_id_int)
-        #
-        #         record_info = weapon_db['record'][type_id][rarity_id]
-        #
-        #         for miss_id in record_info['miss']:
-        #             result_code = self._try_download_weapon_info(type_id, rarity_id, miss_id)
-
         # 遍历所有武器和稀有度
         while True:
-            if self._game_db['weapon']['total'] == self._game_db['new']['weapon']:
+            if self._game_db['weapon']['total'] + int(self._cfg['SETTING']['miss_weapon_count']) == self._game_db['new']['weapon']:
                 log('本地武器数据数量已经匹配最新数据数量')
                 break
 
@@ -337,25 +332,53 @@ class GBFSim:
             if not has_query:
                 break
 
-    def _try_download_weapon_info(self, type_id, rarity_id, weapon_id, check_miss_mode=False):
-        guess_id = get_weapon_id(type_id, rarity_id, weapon_id)
-        guess_filename = f'{guess_id}.json'
-        local_path = os.path.join(self._cfg['PATH']['data'], 'weapon', 'jp', guess_filename)
+    def _download_miss_weapon_data(self):
+        log('============================================')
+        log('= 尝试重新下载缺失编号')
+        log('============================================')
+        weapon_db = self._game_db['weapon']
+
+        # 从缺失里尝试再抓取一遍
+        for type_id_int, weapon_name in WEAPON_TYPE_MAP.items():
+            type_id = str(type_id_int)
+            for rarity_id_int in WEAPON_RARITY_ID_LIST:
+                rarity_id = str(rarity_id_int)
+
+                record_info = weapon_db['record'][type_id][rarity_id]
+
+                for miss_id in record_info['miss']:
+                    self._try_download_weapon_info(type_id, rarity_id, miss_id)
+
+    def _download_weapon_data_en(self):
+        self.set_language(2)
+
+        log('============================================')
+        log('= 下载英文版缺失数据')
+        log('============================================')
+        weapon_db = self._game_db['weapon']
+        for weapon_id in weapon_db['need_en']:
+            self._try_download_weapon_info_by_id(weapon_id, lang='en')
+
+    def _try_download_weapon_info(self, type_id, rarity_id, weapon_id, lang='jp'):
+        self._try_download_weapon_info_by_id(get_weapon_id(type_id, rarity_id, weapon_id), lang)
+
+    def _try_download_weapon_info_by_id(self, weapon_id, lang='jp'):
+        guess_filename = f'{weapon_id}.json'
+        local_path = os.path.join(self._cfg['PATH']['data'], 'weapon', lang, guess_filename)
         # 本地已经存在，返回0
         if os.path.exists(local_path):
             return 0
         # 本地不存在，向服务器请求
-        weapon_result = self._request_weapon_detail(guess_id)
+        weapon_result = self._request_weapon_detail(weapon_id)
         # 服务器存在并保存返回1
         if weapon_result['status_code'] == 200:
             self._weapon_db_add_item_by_filename(guess_filename)
             save_json(weapon_result['data'], local_path)
-            log('武器[%s] %s 数据保存完毕' % (guess_id, weapon_result['data']['name']))
+            log('武器[%s] %s 数据保存完毕' % (weapon_id, weapon_result['data']['name']))
             return 1
         # 服务器不存在，返回-1
         elif weapon_result['status_code'] == 500:
-            if not check_miss_mode:
-                log('武器[%s] 数据不存在' % guess_id)
+            log('武器[%s] 数据不存在' % weapon_id)
             return -1
 
     def _request_weapon_detail(self, weapon_id):
