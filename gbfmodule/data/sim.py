@@ -7,7 +7,7 @@ import sqlite3
 import win32crypt
 import requests.cookies
 import json
-from danteng_lib import log, save_json, load_json_v37 as load_json
+from danteng_lib import log, save_json, load_json
 from config import *
 
 
