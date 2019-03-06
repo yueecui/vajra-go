@@ -10,16 +10,16 @@ GUESS_CONFIG_BY_RARITY = {
         'max_time': 1,
     },
     2: {
-        'step': 30,
+        'step': 2,
         'max_time': 1,
     },
     3: {
-        'step': 20,
-        'max_time': 1,
+        'step': 3,
+        'max_time': 2,
     },
     4: {
-        'step': 1,
-        'max_time': 1,
+        'step': 10,
+        'max_time': 2,
     },
 }
 
