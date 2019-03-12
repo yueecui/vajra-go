@@ -57,6 +57,13 @@ def summon_data_to_excel():
         with open(os.path.join(base_path, 'en', filename), 'r', encoding='UTF-8') as f:
             item_json_en = json.loads(f.read())
 
+        final_uncap_file_path = os.path.join(base_path, 'uncap', filename)
+        if os.path.exists(final_uncap_file_path):
+            with open(final_uncap_file_path, 'r', encoding='UTF-8') as f:
+                item_json_u = json.loads(f.read())
+                item_json['master'] = item_json_u['master']
+                item_json['special_skill'] = item_json_u['special_skill']
+
         final_uncap_file_path = os.path.join(base_path, 'final_uncap', filename)
         if os.path.exists(final_uncap_file_path):
             with open(final_uncap_file_path, 'r', encoding='UTF-8') as f:
