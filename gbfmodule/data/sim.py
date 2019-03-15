@@ -63,7 +63,7 @@ class GBFSim:
             'Host': 'game.granbluefantasy.jp',
             'Origin': 'http://game.granbluefantasy.jp',
             'Referer': 'http://game.granbluefantasy.jp/',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/72.0.3626.119 Safari/537.36',
+            'User-Agent': USER_AGENT,
         }
         if rtype == 'get_api':
             headers.update({
@@ -92,18 +92,20 @@ class GBFSim:
         # 播报新数据信息
         new_msg = ''
         if game_db['weapon']['total'] > 0:
-            if game_db['weapon']['total'] == game_db['new']["weapon"]:
+            total_count = game_db['weapon']['total'] + int(self._cfg['SETTING']['miss_weapon_count'])
+            if total_count == game_db['new']["weapon"]:
                 new_msg = '（无新增）'
             else:
-                new_msg = '（本地差 %d 个）' % (game_db['new']["weapon"] - game_db['weapon']['total'])
+                new_msg = '（本地差 %d 个）' % (game_db['new']["weapon"] - total_count)
         log(f'当前总武器数量：{game_db["new"]["weapon"]}{new_msg}')
 
         new_msg = ''
         if game_db['summon']['total'] > 0:
-            if game_db['summon']['total'] == game_db['new']["summon"]:
+            total_count = game_db['summon']['total'] + int(self._cfg['SETTING']['miss_summon_count'])
+            if total_count == game_db['new']["summon"]:
                 new_msg = '（无新增）'
             else:
-                new_msg = '（本地差 %d 个）' % (game_db['new']["summon"] - game_db['summon']['total'])
+                new_msg = '（本地差 %d 个）' % (game_db['new']["summon"] - total_count)
         log(f'当前总召唤石数量：{game_db["new"]["summon"]}{new_msg}')
 
     # 将当前状态保存

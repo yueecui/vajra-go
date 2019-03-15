@@ -1,3 +1,5 @@
+from set import *
+
 # 记录统计数据的json文件地址
 STATISTICS_JSON = 'game_db_bak.json'
 
