@@ -4,9 +4,9 @@ from huijiWiki import HuijiWiki
 from SaveToExcel import save_to_excel
 from danteng_lib import save_to_csv
 
-WEAPON_PATH = r'E:\GBF\IMAGE\data\en_wiki_weapon'
-SUMMON_PATH = r'E:\GBF\IMAGE\data\en_wiki_summon'
-CHAR_PATH = r'E:\GBF\IMAGE\data\en_wiki_char'
+WEAPON_PATH = r'E:\GBF\data\en_wiki_weapon'
+SUMMON_PATH = r'E:\GBF\data\en_wiki_summon'
+CHAR_PATH = r'E:\GBF\data\en_wiki_char'
 
 
 # 根据读取到的数据修改

@@ -3,6 +3,7 @@ from danteng_downloader import Downloader
 from danteng_lib import log
 from ..util import get_skip_list
 import os
+from config import IMAGE_PATH, IMAGE_NEW_PATH, IMAGE_NPC_PATH
 
 TABX_TITLE = 'Data:角色列表.tabx'
 TABX_KEY = 'ID'
@@ -12,7 +13,9 @@ RES_TABX_KEY = 'ID'
 
 IMG_CONFIG = [
     {'name': '立绘', 'filename_prefix': 'zoom', 'sub_url': 'zoom', 'suffix': 'png', 'has_extra': True, 'skip_index': [], 'multi_element': True, 'skin': False, 'multi': True, 'multi_allow_index': ['01']},
+    # {'name': '图鉴', 'filename_prefix': 'b', 'sub_url': 'b', 'suffix': 'png', 'has_extra': True, 'skip_index': [], 'multi_element': True, 'skin': False, 'multi': True, 'multi_allow_index': ['01']},
     {'name': '详情横图', 'filename_prefix': 'detail', 'sub_url': 'detail', 'suffix': 'png', 'has_extra': True, 'skip_index': [], 'multi_element': True, 'skin': False, 'multi': True},
+    {'name': '首页图', 'filename_prefix': 'my', 'sub_url': 'my', 'suffix': 'png', 'has_extra': True, 'skip_index': [], 'multi_element': True, 'skin': False, 'multi': True, 'multi_allow_index': ['01']},
     {'name': '横图标', 'filename_prefix': 'm', 'sub_url': 'm', 'suffix': 'jpg', 'has_extra': True, 'skip_index': [], 'multi_element': True, 'skin': False, 'multi': True},
     {'name': '方图标', 'filename_prefix': 's', 'sub_url': 's', 'suffix': 'jpg', 'has_extra': True, 'skip_index': [], 'multi_element': True, 'skin': False, 'multi': True},
     {'name': '编成图标', 'filename_prefix': 'f', 'sub_url': 'f', 'suffix': 'jpg', 'has_extra': True, 'skip_index': [], 'multi_element': True, 'skin': False, 'multi': True},
@@ -34,7 +37,6 @@ def npc(cfg):
     download_skin = False
     save_to_new = False
     retry_times = 5
-    skip_list_filename = ''
     if 'OPTION' in cfg:
         if 'skin' in cfg['OPTION'] and cfg['OPTION']['skin'].lower() == 'yes':
             download_skin = True
@@ -45,11 +47,9 @@ def npc(cfg):
                 retry_times = int(cfg['OPTION']['retry'])
             except:
                 pass
-        if 'skip_list' in cfg['OPTION']:
-            skip_list_filename = cfg['OPTION']['skip_list']
 
     # 配置下载器
-    skip_list = get_skip_list(skip_list_filename)
+    skip_list = get_skip_list()
 
     downloader = Downloader()
     downloader.set_try_count(retry_times)
@@ -125,8 +125,8 @@ def npc(cfg):
                     folder_name = config['folder'] if 'folder' in config else ''
                     save_filename = '%s_%s.%s' % (config["filename_prefix"], img_name, config["suffix"])
 
-                    save_path = os.path.join(cfg['PATH']['npc'], str(npc_id), folder_name, save_filename)
-                    save_new_path = os.path.join(cfg['PATH']['new'], folder_name, save_filename)
+                    save_path = os.path.join(IMAGE_PATH, IMAGE_NPC_PATH, str(npc_id), folder_name, save_filename)
+                    save_new_path = os.path.join(IMAGE_PATH, IMAGE_NEW_PATH, folder_name, save_filename)
 
                     if os.path.exists(save_path):
                         continue

@@ -1,4 +1,18 @@
-from set import *
+# 图片保存目录
+IMAGE_PATH = 'IMAGE'
+IMAGE_NEW_PATH = 'new'
+IMAGE_NPC_PATH = 'npc'
+IMAGE_SKIN_PATH = 'skin'
+IMAGE_SUMMON_PATH = 'summon'
+IMAGE_SKILL_PATH = 'skill'
+
+DATA_PATH = 'data'
+
+EXCEL_PATH = 'excel'
+
+WIKITEXT_PATH = 'wikitext'
+
+SKIP_LIST_PATH = 'skip.txt'
 
 # 记录统计数据的json文件地址
 STATISTICS_JSON = 'game_db_bak.json'

@@ -2,6 +2,7 @@ from danteng_downloader import Downloader
 from danteng_lib import log
 from ..util import get_skip_list
 import os
+from config import IMAGE_PATH, IMAGE_NEW_PATH, IMAGE_SKILL_PATH
 
 DOWNLOAD_TYPE = 'skill'
 
@@ -10,7 +11,6 @@ def skill(cfg):
     # 开关
     save_to_new = False
     retry_times = 5
-    skip_list_filename = ''
     if 'OPTION' in cfg:
         if 'new' in cfg['OPTION'] and cfg['OPTION']['new'].lower() == 'yes':
             save_to_new = True
@@ -19,21 +19,19 @@ def skill(cfg):
                 retry_times = int(cfg['OPTION']['retry'])
             except:
                 pass
-        if 'skip_list' in cfg['OPTION']:
-            skip_list_filename = cfg['OPTION']['skip_list']
 
     # 获取范围
     start = 0
     end = 0
-    if 'SETTING' in cfg:
-        if 'sk_start' in cfg['SETTING']:
+    if 'IMAGE' in cfg:
+        if 'sk_start' in cfg['IMAGE']:
             try:
-                start = int(cfg['SETTING']['sk_start'])
+                start = int(cfg['IMAGE']['sk_start'])
             except:
                 pass
-        if 'sk_end' in cfg['SETTING']:
+        if 'sk_end' in cfg['IMAGE']:
             try:
-                end = int(cfg['SETTING']['sk_end'])
+                end = int(cfg['IMAGE']['sk_end'])
             except:
                 pass
 
@@ -42,7 +40,7 @@ def skill(cfg):
         return False
 
     # 配置下载器
-    skip_list = get_skip_list(skip_list_filename)
+    skip_list = get_skip_list()
 
     downloader = Downloader()
     downloader.set_try_count(retry_times)
@@ -59,10 +57,10 @@ def skill(cfg):
                 continue
 
             save_filename = 'SK_' + save_filename
-            save_path = os.path.join(cfg['PATH']['skill'], save_filename)
+            save_path = os.path.join(IMAGE_PATH, IMAGE_SKILL_PATH, save_filename)
             if os.path.exists(save_path):
                 continue
-            save_new_path = os.path.join(cfg['PATH']['new'], save_filename)
+            save_new_path = os.path.join(IMAGE_PATH, IMAGE_NEW_PATH, save_filename)
 
             if save_to_new:
                 downloader.download_multi_copies(skill_icon_url, [save_path, save_new_path])

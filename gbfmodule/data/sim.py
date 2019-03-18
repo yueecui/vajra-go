@@ -63,7 +63,7 @@ class GBFSim:
             'Host': 'game.granbluefantasy.jp',
             'Origin': 'http://game.granbluefantasy.jp',
             'Referer': 'http://game.granbluefantasy.jp/',
-            'User-Agent': USER_AGENT,
+            'User-Agent': self._cfg['SIM']['user_agent'],
         }
         if rtype == 'get_api':
             headers.update({
@@ -92,7 +92,7 @@ class GBFSim:
         # 播报新数据信息
         new_msg = ''
         if game_db['weapon']['total'] > 0:
-            total_count = game_db['weapon']['total'] + int(self._cfg['SETTING']['miss_weapon_count'])
+            total_count = game_db['weapon']['total'] + int(self._cfg['SIM']['miss_weapon_count'])
             if total_count == game_db['new']["weapon"]:
                 new_msg = '（无新增）'
             else:
@@ -101,7 +101,7 @@ class GBFSim:
 
         new_msg = ''
         if game_db['summon']['total'] > 0:
-            total_count = game_db['summon']['total'] + int(self._cfg['SETTING']['miss_summon_count'])
+            total_count = game_db['summon']['total'] + int(self._cfg['SIM']['miss_summon_count'])
             if total_count == game_db['new']["summon"]:
                 new_msg = '（无新增）'
             else:
@@ -110,7 +110,7 @@ class GBFSim:
 
     # 将当前状态保存
     def _save_statistics(self):
-        save_json(self._game_db, os.path.join(self._cfg['PATH']['data'], STATISTICS_JSON))
+        save_json(self._game_db, os.path.join(DATA_PATH, STATISTICS_JSON))
 
     # 设置游戏语言
     # 1 日语
@@ -146,7 +146,7 @@ class GBFSim:
                 }
 
         # 从本地文件中检索
-        data_base_jp_path = os.path.join(self._cfg['PATH']['data'], 'weapon', 'jp')
+        data_base_jp_path = os.path.join(DATA_PATH, 'weapon', 'jp')
         if not os.path.exists(data_base_jp_path):
             return -1
         weapon_json_filename_list = os.listdir(data_base_jp_path)
@@ -212,7 +212,7 @@ class GBFSim:
             }
 
         # 从本地文件中检索
-        data_base_jp_path = os.path.join(self._cfg['PATH']['data'], 'summon', 'jp')
+        data_base_jp_path = os.path.join(DATA_PATH, 'summon', 'jp')
         if not os.path.exists(data_base_jp_path):
             return -1
         summon_json_filename_list = os.listdir(data_base_jp_path)
@@ -317,7 +317,7 @@ class GBFSim:
     def download_weapon_data(self):
         # 切语言到日文
         self._download_new_weapon_data()
-        if (self._game_db['weapon']['total'] + int(self._cfg['SETTING']['miss_weapon_count']) < self._game_db['new'][
+        if (self._game_db['weapon']['total'] + int(self._cfg['SIM']['miss_weapon_count']) < self._game_db['new'][
             'weapon']) and self._cfg['OPTION']['download_miss_weapon'] == 'yes':
             self._download_miss_weapon_data()
         # 下载额外需要的数据（武器里只包括英文版数据）
@@ -339,7 +339,7 @@ class GBFSim:
 
         # 遍历所有武器和稀有度
         while True:
-            if self._game_db['weapon']['total'] + int(self._cfg['SETTING']['miss_weapon_count']) == self._game_db['new']['weapon']:
+            if self._game_db['weapon']['total'] + int(self._cfg['SIM']['miss_weapon_count']) == self._game_db['new']['weapon']:
                 log('本地武器数据数量已经匹配最新数据数量')
                 break
 
@@ -421,7 +421,7 @@ class GBFSim:
     def _download_weapon_data_add(self):
         en_need_list = []
         # 从本地文件中检索
-        data_base_jp_path = os.path.join(self._cfg['PATH']['data'], 'weapon', 'jp')
+        data_base_jp_path = os.path.join(DATA_PATH, 'weapon', 'jp')
         if not os.path.exists(data_base_jp_path):
             return -1
         weapon_json_filename_list = os.listdir(data_base_jp_path)
@@ -432,7 +432,7 @@ class GBFSim:
 
             weapon_info = get_item_info_from_filename(filename)
 
-            data_base_path = os.path.join(self._cfg['PATH']['data'], 'weapon')
+            data_base_path = os.path.join(DATA_PATH, 'weapon')
             en_filename = f'{weapon_info["id"]}.json'
             en_fullpath = os.path.join(data_base_path, 'en', en_filename)
             if not (os.path.exists(en_fullpath) and os.path.getsize(en_fullpath) > 0):
@@ -456,7 +456,7 @@ class GBFSim:
 
     def _try_download_weapon_info_by_id(self, weapon_id, lang='jp'):
         guess_filename = f'{weapon_id}.json'
-        local_path = os.path.join(self._cfg['PATH']['data'], 'weapon', lang, guess_filename)
+        local_path = os.path.join(DATA_PATH, 'weapon', lang, guess_filename)
         # 本地已经存在，返回0
         if os.path.exists(local_path):
             return 0
@@ -492,7 +492,7 @@ class GBFSim:
     def download_summon_data(self):
         # 下载日文召唤石数据
         self._download_new_summon_data()
-        if (self._game_db['summon']['total'] + int(self._cfg['SETTING']['miss_summon_count']) < self._game_db['new'][
+        if (self._game_db['summon']['total'] + int(self._cfg['SIM']['miss_summon_count']) < self._game_db['new'][
             'summon']) and self._cfg['OPTION']['download_miss_summon'] == 'yes':
             self._download_miss_summon_data()
         # 下载额外需要的数据（召唤石里包括英文版数据、满突数据和终突数据）
@@ -514,7 +514,7 @@ class GBFSim:
 
         # 遍历所有武器和稀有度
         while True:
-            if self._game_db['summon']['total'] + int(self._cfg['SETTING']['miss_summon_count']) == self._game_db['new']['summon']:
+            if self._game_db['summon']['total'] + int(self._cfg['SIM']['miss_summon_count']) == self._game_db['new']['summon']:
                 log('本地召唤石数据数量已经匹配最新数据数量')
                 break
 
@@ -590,7 +590,7 @@ class GBFSim:
         uncap_need_list = []
         final_uncap_need_list = []
         # 从本地文件中检索
-        data_base_path = os.path.join(self._cfg['PATH']['data'], 'summon')
+        data_base_path = os.path.join(DATA_PATH, 'summon')
         data_base_jp_path = os.path.join(data_base_path, 'jp')
         if not os.path.exists(data_base_jp_path):
             return -1
@@ -659,7 +659,7 @@ class GBFSim:
 
     def _try_download_summon_info_by_id(self, summon_id, lang='jp'):
         guess_filename = f'{summon_id}.json'
-        local_path = os.path.join(self._cfg['PATH']['data'], 'summon', lang, guess_filename)
+        local_path = os.path.join(DATA_PATH, 'summon', lang, guess_filename)
         # 本地已经存在，返回0
         if os.path.exists(local_path):
             return 0
@@ -698,9 +698,9 @@ class GBFSim:
     def _try_download_summon_uncap_info_by_id(self, summon_id, uncap_lv):
         summon_filename = f'{summon_id}.json'
         if uncap_lv == 2:
-            local_path = os.path.join(self._cfg['PATH']['data'], 'summon', 'uncap', summon_filename)
+            local_path = os.path.join(DATA_PATH, 'summon', 'uncap', summon_filename)
         elif uncap_lv == 3:
-            local_path = os.path.join(self._cfg['PATH']['data'], 'summon', 'final_uncap', summon_filename)
+            local_path = os.path.join(DATA_PATH, 'summon', 'final_uncap', summon_filename)
         else:
             raise Exception('错误的uncap level')
         # 本地已经存在，返回0
@@ -776,7 +776,7 @@ class GBFSim:
 
         # 遍历所有武器和稀有度
         while True:
-            if self._game_db['weapon']['total'] + int(self._cfg['SETTING']['miss_weapon_count']) == self._game_db['new']['weapon']:
+            if self._game_db['weapon']['total'] + int(self._cfg['SIM']['miss_weapon_count']) == self._game_db['new']['weapon']:
                 log('本地武器数据数量已经匹配最新数据数量')
                 break
 
@@ -864,7 +864,7 @@ class GBFSim:
 
     def _try_download_weapon_shop_info_by_id(self, weapon_id):
         guess_filename = f'{weapon_id}.json'
-        local_path = os.path.join(self._cfg['PATH']['data'], 'shop_miss', guess_filename)
+        local_path = os.path.join(DATA_PATH, 'shop_miss', guess_filename)
         # 本地已经存在，返回0
         if os.path.exists(local_path):
             return 0
@@ -912,7 +912,7 @@ class GBFSim:
 
         # 遍历所有武器和稀有度
         while True:
-            if self._game_db['summon']['total'] + int(self._cfg['SETTING']['miss_summon_count']) == self._game_db['new']['summon']:
+            if self._game_db['summon']['total'] + int(self._cfg['SIM']['miss_summon_count']) == self._game_db['new']['summon']:
                 log('本地召唤石数据数量已经匹配最新数据数量')
                 break
 
@@ -992,7 +992,7 @@ class GBFSim:
 
     def _try_download_summon_shop_info_by_id(self, summon_id):
         guess_filename = f'{summon_id}.json'
-        local_path = os.path.join(self._cfg['PATH']['data'], 'shop_miss', guess_filename)
+        local_path = os.path.join(DATA_PATH, 'shop_miss', guess_filename)
         # 本地已经存在，返回0
         if os.path.exists(local_path):
             return 0
@@ -1014,7 +1014,7 @@ class GBFSim:
 
     # 根据从商店API跑出的数据下载新数据
     def download_data_by_new_id(self):
-        check_new_id_path = os.path.join(self._cfg['PATH']['data'], 'check_new_id')
+        check_new_id_path = os.path.join(DATA_PATH, 'check_new_id')
         check_new_id_list = os.listdir(check_new_id_path)
 
         if len(check_new_id_list) == 0:
@@ -1050,7 +1050,7 @@ def get_chrome_cookies(url, profile):
 
 
 def get_game_cookies(cfg):
-    profile_name = cfg['SETTING']['cookies_user']
+    profile_name = cfg['SIM']['cookies_user']
 
     # print('====================================================')
     # print('开始从Chrome中获取游戏登录用cookies')

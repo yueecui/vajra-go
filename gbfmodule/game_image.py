@@ -6,6 +6,7 @@ DOWNLOAD_TYPE = {
     'npc': npc,
     'skill': skill,
     'skin': skin,
+    'summon': summon,
 }
 
 
