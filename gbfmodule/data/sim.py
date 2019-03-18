@@ -318,7 +318,7 @@ class GBFSim:
         # 切语言到日文
         self._download_new_weapon_data()
         if (self._game_db['weapon']['total'] + int(self._cfg['SIM']['miss_weapon_count']) < self._game_db['new'][
-            'weapon']) and self._cfg['OPTION']['download_miss_weapon'] == 'yes':
+            'weapon']) and self._cfg['SIM']['download_miss_weapon'] == 'yes':
             self._download_miss_weapon_data()
         # 下载额外需要的数据（武器里只包括英文版数据）
         self._download_weapon_data_add()
@@ -493,7 +493,7 @@ class GBFSim:
         # 下载日文召唤石数据
         self._download_new_summon_data()
         if (self._game_db['summon']['total'] + int(self._cfg['SIM']['miss_summon_count']) < self._game_db['new'][
-            'summon']) and self._cfg['OPTION']['download_miss_summon'] == 'yes':
+            'summon']) and self._cfg['SIM']['download_miss_summon'] == 'yes':
             self._download_miss_summon_data()
         # 下载额外需要的数据（召唤石里包括英文版数据、满突数据和终突数据）
         self._download_summon_data_add()

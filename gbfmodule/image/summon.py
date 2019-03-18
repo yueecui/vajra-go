@@ -24,12 +24,12 @@ def summon(cfg):
     # 开关
     save_to_new = False
     retry_times = 5
-    if 'OPTION' in cfg:
-        if 'new' in cfg['OPTION'] and cfg['OPTION']['new'].lower() == 'yes':
+    if 'IMAGE' in cfg:
+        if 'new' in cfg['IMAGE'] and cfg['IMAGE']['new'].lower() == 'yes':
             save_to_new = True
-        if 'retry' in cfg['OPTION']:
+        if 'retry' in cfg['IMAGE']:
             try:
-                retry_times = int(cfg['OPTION']['retry'])
+                retry_times = int(cfg['IMAGE']['retry'])
             except:
                 pass
 
