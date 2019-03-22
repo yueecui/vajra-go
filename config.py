@@ -11,6 +11,7 @@ DATA_PATH = 'data'
 EXCEL_PATH = 'excel'
 
 WIKITEXT_PATH = 'wikitext'
+WIKITEXT_SYNC_PATH = 'wikitext_sync'
 
 SKIP_LIST_PATH = 'skip.txt'
 

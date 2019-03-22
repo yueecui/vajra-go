@@ -1035,6 +1035,15 @@ class GBFSim:
             elif item_info['kind'] == 2:
                 self._try_download_summon_info(item_info['rarity'], item_info['index'])
 
+    # 获取所有召唤石ID
+    def all_summon(self):
+        for rarity_id in RARITY_ID_LIST:
+            rarity_data = self._game_db['summon']['record'][str(rarity_id)]
+            for summon_id in range(0, rarity_data['max'] + 1):
+                if summon_id in rarity_data['miss']:
+                    continue
+                yield get_summon_id(rarity_id, summon_id)
+
 
 def get_chrome_cookies(url, profile):
     cookie_file_path = os.path.join(os.environ['LOCALAPPDATA'], r'Google\Chrome\User Data\{}\Cookies'.format(profile))

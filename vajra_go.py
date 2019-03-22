@@ -26,10 +26,15 @@ def main():
     extract_parser.add_argument('find_order', nargs='?', default='new', type=str)
     extract_parser.set_defaults(callback=find_new_game_data)
 
-    # 抓取游戏数据
+    # 下载上传tabx数据
     extract_parser = subparsers.add_parser('tabx', help='wiki tabx updater')
     extract_parser.add_argument('command', type=str)
     extract_parser.set_defaults(callback=gbf_wiki_tabx_updater)
+
+    # 更新WIKI页面
+    extract_parser = subparsers.add_parser('wiki', help='wiki tabx updater')
+    extract_parser.add_argument('command',  nargs='?', default='all', type=str)
+    extract_parser.set_defaults(callback=gbf_wiki_page_updater)
 
     # 获取解析后的参数
     args = parser.parse_args()
