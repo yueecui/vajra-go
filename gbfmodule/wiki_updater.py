@@ -1,12 +1,15 @@
 import os
+import time
 from huijiWiki import HuijiWiki
+from huijiWikiTabx import HuijiWikiTabx
 from danteng_lib import log, read_file, load_json
-from config import WIKITEXT_SYNC_PATH, DATA_PATH
+from config import WIKITEXT_SYNC_PATH, DATA_PATH, SKIP_SUMMON_ID_LIST_PATH, SKIP_WEAPON_ID_LIST_PATH, SUMMON_ATTRIBUTE_MAP, SUMMON_RARITY_MAP
 from .data.sim import GBFSim
 
 
 def gbf_wiki_page_updater(cfg, args):
     cfg['wiki'] = HuijiWiki('gbf')
+    cfg['sim'] = GBFSim(cfg)
     # 登录wiki
     if not cfg['wiki'].login(cfg['WIKI']['username'], cfg['WIKI']['password']):
         raise Exception('登录WIKI失败，请稍后再试')
@@ -16,15 +19,144 @@ def gbf_wiki_page_updater(cfg, args):
     if args.command == 'all':
         pass
     elif args.command == 'summon':
+        update_summon_tabx(cfg, args)
         update_summon_page(cfg, args)
     else:
         print('错误的指令')
 
 
-def update_summon_page(cfg, args):
-    gbf_sim = GBFSim(cfg)
+def update_summon_tabx(cfg, args):
+    gbf_sim = cfg['sim']
+    gbf_wiki = cfg['wiki']
+    tabx_page_title = f'Data:{cfg["TABX"]["summon"]}.tabx'
+
+    skip_summon_id_list = get_skip_summon_id_list()
+
+    summon_tabx = HuijiWikiTabx(gbf_wiki, tabx_page_title, 'ID')
+
+    tabx_mod = False
 
     for summon_id in gbf_sim.all_summon():
+        summon_id = int(summon_id)
+        if summon_id in skip_summon_id_list:
+            continue
+        if not summon_tabx.has_key(summon_id):
+            summon_tabx.mod_row(summon_id, generate_summon_row(summon_id))
+            tabx_mod = True
+
+    # 保存
+    if tabx_mod:
+        summon_tabx.save()
+    else:
+        log('[[%s]]没有修改。' % cfg["TABX"]["summon"])
+
+
+def generate_summon_row(summon_id):
+    # 召唤石图鉴数据
+    note_data_jp = load_json(os.path.join(DATA_PATH, 'summon', 'jp', f'{summon_id}.json'))
+    note_data_en = load_json(os.path.join(DATA_PATH, 'summon', 'en', f'{summon_id}.json'))
+
+    temp_row = {
+        'name_jp': note_data_jp['name'],
+        'series_name': note_data_jp['series_name'],
+        'name_en': note_data_en['name'],
+        'name_chs': '',
+        'nickname': [],
+        'search_nickname': [],
+        'element': SUMMON_ATTRIBUTE_MAP[note_data_jp['attribute']],
+        'rarity': SUMMON_RARITY_MAP[note_data_jp['rarity']],
+        'category': '',
+        'tag': [],
+        'is_free': False,
+        'mypage': False,
+        'skill_name_jp': '',
+        'skill_prefix_jp': '',
+        'skill_suffix_jp': '',
+        'skill_name_en': '',
+        'skill_prefix_en': '',
+        'skill_suffix_en': '',
+        'skill_name_cn': '',
+        'skill_prefix_cn': '',
+        'skill_suffix_cn': '',
+        'link_enwiki': '',
+        'link_gamewith': 0,
+        'link_jpwiki': '',
+        'link_kamigame': '',
+        'uncap_img': [],
+        'summon_id': 0,
+        'tribe_id': 0,
+        'release_date': time.strftime("##%Y-%m-%d", time.localtime()),
+        'star4_date': '',
+        'star5_date': '',
+        'max_hp': 0,
+        'max_atk': 0,
+        'evo4_hp': 0,
+        'evo4_atk': 0,
+        'evo5_hp': 0,
+        'evo5_atk': 0,
+        'base_evo': 3,
+        'max_evo': 3,
+        'cv': note_data_jp['voice_acter'].split(' '),
+        'has_sub_skill': 'sub_skill' in note_data_jp,
+        'not_in_note': False,
+        'no_combo_first': False,
+    }
+
+    uncap_data_jp = load_json(os.path.join(DATA_PATH, 'summon', 'uncap', f'{summon_id}.json'))
+    if uncap_data_jp:
+        temp_row.update({
+            'skill_name_jp': uncap_data_jp['special_skill']['name'],
+            'skill_prefix_jp': uncap_data_jp['special_skill']['coalescence_name1'],
+            'skill_suffix_jp': uncap_data_jp['special_skill']['coalescence_name2'],
+            'skill_name_en': uncap_data_jp['special_skill']['name_en'].strip(),
+            'skill_prefix_en': uncap_data_jp['special_skill']['coalescence_name1_en'].strip(),
+            'skill_suffix_en': uncap_data_jp['special_skill']['coalescence_name2_en'].strip(),
+            'summon_id': int(uncap_data_jp['master']['summon_id']),
+            'tribe_id': int(uncap_data_jp['master']['tribe']),
+            'max_hp': int(uncap_data_jp['param']['hp']),
+            'max_atk': int(uncap_data_jp['param']['attack']),
+        })
+
+    final_uncap_data_jp = load_json(os.path.join(DATA_PATH, 'summon', 'final_uncap', f'{summon_id}.json'))
+    if final_uncap_data_jp:
+        temp_row.update({
+            'evo4_hp': int(final_uncap_data_jp['param']['hp']),
+            'evo4_atk': int(final_uncap_data_jp['param']['attack']),
+            'max_evo': 4,
+        })
+
+    return temp_row
+
+
+def get_skip_summon_id_list():
+    content, result = read_file(SKIP_SUMMON_ID_LIST_PATH)
+    if not result:
+        return []
+    else:
+        raw_list = content.split('\n')
+        skip_id_list = []
+        for skip_id_text in raw_list:
+            skip_id_text = skip_id_text.strip()
+            if skip_id_text == '':
+                continue
+            if skip_id_text[0:1] == '#':
+                continue
+            try:
+                skip_id_list.append(int(skip_id_text))
+            except ValueError:
+                continue
+        return skip_id_list
+
+
+def update_summon_page(cfg, args):
+    gbf_sim = cfg['sim']
+    gbf_wiki = cfg['wiki']
+
+    skip_summon_id_list = get_skip_summon_id_list()
+
+    for summon_id in gbf_sim.all_summon():
+        if int(summon_id) in skip_summon_id_list:
+            continue
         page_title = f'Summon/{summon_id}'
         page_content = new_summon_page(summon_id)
 
@@ -33,14 +165,13 @@ def update_summon_page(cfg, args):
 
         # 文件不存在时才更新服务器
         if not read_result:
-            cfg['wiki'].edit(page_title, page_content)
+            gbf_wiki.edit(page_title, page_content)
+            gbf_wiki.wait_threads()
 
         # 不管文件是否存在，都会更新本地缓存，方便手工补充
         if wikitext_sync_file_content.strip() != page_content.strip():
             with open(wikitext_sync_file_path, 'w', encoding='UTF-8') as f:
                 f.write(page_content)
-
-    cfg['wiki'].wait_threads()
 
 
 def new_summon_page(summon_id):

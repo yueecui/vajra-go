@@ -14,6 +14,8 @@ WIKITEXT_PATH = 'wikitext'
 WIKITEXT_SYNC_PATH = 'wikitext_sync'
 
 SKIP_LIST_PATH = 'skip.txt'
+SKIP_SUMMON_ID_LIST_PATH = 'skip_summon.txt'
+SKIP_WEAPON_ID_LIST_PATH = 'skip_weapon.txt'
 
 # 记录统计数据的json文件地址
 STATISTICS_JSON = 'game_db_bak.json'
@@ -70,3 +72,19 @@ WEAPON_TYPE_MAP = {
 # 4位 - 固定为0
 # 5-7位 - 稀有度内索引
 # 8-10位 - 固定为0
+
+SUMMON_ATTRIBUTE_MAP = {
+    '1': '火',
+    '2': '水',
+    '3': '土',
+    '4': '风',
+    '5': '光',
+    '6': '暗',
+}
+
+SUMMON_RARITY_MAP = {
+    '1': 'N',
+    '2': 'R',
+    '3': 'SR',
+    '4': 'SSR',
+}
