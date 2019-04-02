@@ -222,9 +222,9 @@ def new_summon_page(summon_id):
     page_content_rows.append('')
 
     # 主加护文本
-    main_aura_text = [note_data_jp["skill"]["comment"]]
+    main_aura_text = ['{{Evo|0}} ' + note_data_jp["skill"]["comment"]]
     if uncap_data_jp:
-        main_aura_text.append('<br><br>{{Evo|3}} ' + uncap_data_jp["skill"]["comment"])
+        main_aura_text.append('<br>{{Evo|3}} ' + uncap_data_jp["skill"]["comment"])
     if final_uncap_data_jp:
         main_aura_text.append('<br>{{Evo|4}} ' + final_uncap_data_jp["skill"]["comment"])
 
@@ -232,9 +232,9 @@ def new_summon_page(summon_id):
     has_sub = False
     if 'sub_skill' in note_data_jp:
         has_sub = True
-        sub_aura_text.append(note_data_jp["sub_skill"]["comment"])
+        sub_aura_text.append('{{Evo|0}} ' + note_data_jp["sub_skill"]["comment"])
         if uncap_data_jp:
-            sub_aura_text.append('<br><br>{{Evo|3}} ' + uncap_data_jp["sub_skill"]["comment"])
+            sub_aura_text.append('<br>{{Evo|3}} ' + uncap_data_jp["sub_skill"]["comment"])
         if final_uncap_data_jp:
             sub_aura_text.append('<br>{{Evo|4}} ' + final_uncap_data_jp["sub_skill"]["comment"])
 
