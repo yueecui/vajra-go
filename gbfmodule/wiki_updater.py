@@ -3,7 +3,7 @@ import time
 from huijiWiki import HuijiWiki
 from huijiWikiTabx import HuijiWikiTabx
 from danteng_lib import log, read_file, load_json
-from config import WIKITEXT_SYNC_PATH, DATA_PATH, SKIP_SUMMON_ID_LIST_PATH, SKIP_WEAPON_ID_LIST_PATH, SUMMON_ATTRIBUTE_MAP, SUMMON_RARITY_MAP
+from config import WIKITEXT_SYNC_PATH, DATA_PATH, SKIP_SUMMON_ID_LIST_PATH, SKIP_WEAPON_ID_LIST_PATH
 from .data.sim import GBFSim
 
 
@@ -63,8 +63,8 @@ def generate_summon_row(summon_id):
         'name_chs': '',
         'nickname': [],
         'search_nickname': [],
-        'element': SUMMON_ATTRIBUTE_MAP[note_data_jp['attribute']],
-        'rarity': SUMMON_RARITY_MAP[note_data_jp['rarity']],
+        'element': int(note_data_jp['attribute']),
+        'rarity': int(note_data_jp['rarity']),
         'category': '',
         'tag': [],
         'is_free': False,

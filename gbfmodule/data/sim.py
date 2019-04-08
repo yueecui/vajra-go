@@ -156,7 +156,8 @@ class GBFSim:
                 continue
 
             weapon_info = get_item_info_from_filename(filename)
-            self._weapon_db_add_item(weapon_info)
+            if weapon_info:
+                self._weapon_db_add_item(weapon_info)
 
         # 整理缺失index
         for type_id_int, weapon_name in WEAPON_TYPE_MAP.items():

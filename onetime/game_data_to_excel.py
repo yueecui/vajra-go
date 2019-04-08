@@ -97,5 +97,5 @@ def save_row(headers, contents, item_json, item_json_en):
 
 
 if __name__ == '__main__':
-    # weapon_data_to_excel()
-    summon_data_to_excel()
+    weapon_data_to_excel()
+    # summon_data_to_excel()

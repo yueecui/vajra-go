@@ -4,7 +4,7 @@ from huijiWiki import HuijiWiki
 from SaveToExcel import save_to_excel
 from danteng_lib import save_to_csv
 
-WEAPON_PATH = r'E:\GBF\data\en_wiki_weapon'
+WEAPON_PATH = r'E:\GBF\data\new_wiki_weapon'
 SUMMON_PATH = r'E:\GBF\data\en_wiki_summon'
 CHAR_PATH = r'E:\GBF\data\en_wiki_char'
 
@@ -167,6 +167,6 @@ def save_row(headers, contents, page_title, template):
 
 
 if __name__ == '__main__':
-    # en_wiki_weapon_to_excel()
+    en_wiki_weapon_to_excel()
     # en_wiki_summon_to_excel()
-    en_wiki_char_to_excel()
+    # en_wiki_char_to_excel()
