@@ -65,5 +65,5 @@ def skill(cfg):
             if save_to_new:
                 downloader.download_multi_copies(skill_icon_url, [save_path, save_new_path])
             else:
-                downloader.download_multi_copies(skill_icon_url, [save_new_path])
+                downloader.download_multi_copies(skill_icon_url, [save_path])
     downloader.wait_threads()

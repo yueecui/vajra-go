@@ -5,6 +5,7 @@ IMAGE_NPC_PATH = 'npc'
 IMAGE_SKIN_PATH = 'skin'
 IMAGE_SUMMON_PATH = 'summon'
 IMAGE_WEAPON_PATH = 'weapon'
+IMAGE_WEAPON_SKILL_PATH = 'weapon_skill_en'
 IMAGE_SKILL_PATH = 'skill'
 
 DATA_PATH = 'data'
@@ -73,3 +74,18 @@ WEAPON_TYPE_MAP = {
 # 4位 - 固定为0
 # 5-7位 - 稀有度内索引
 # 8-10位 - 固定为0
+
+ELEMENT_JP_TO_CHS = {
+    '火': '火',
+    '水': '水',
+    '土': '土',
+    '風': '风',
+    '光': '光',
+    '闇': '暗',
+    '1': '火',
+    '2': '水',
+    '3': '土',
+    '4': '风',
+    '5': '光',
+    '6': '暗',
+}

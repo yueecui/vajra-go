@@ -1045,6 +1045,16 @@ class GBFSim:
                     continue
                 yield get_summon_id(rarity_id, summon_id)
 
+    # 获取所有武器ID
+    def all_weapon(self):
+        for type_id in WEAPON_TYPE_MAP.keys():
+            for rarity_id in RARITY_ID_LIST:
+                rarity_data = self._game_db['weapon']['record'][str(type_id)][str(rarity_id)]
+                for weapon_id in range(0, rarity_data['max'] + 1):
+                    if weapon_id in rarity_data['miss']:
+                        continue
+                    yield get_weapon_id(type_id, rarity_id, weapon_id)
+
 
 def get_chrome_cookies(url, profile):
     cookie_file_path = os.path.join(os.environ['LOCALAPPDATA'], r'Google\Chrome\User Data\{}\Cookies'.format(profile))
