@@ -13,6 +13,7 @@ IMG_CONFIG = [
     {'name': '详情横图', 'filename_prefix': 'detail', 'sub_url': 'detail', 'suffix': 'png', 'has_extra': True},
     {'name': '横图标', 'filename_prefix': 'm', 'sub_url': 'm', 'suffix': 'jpg', 'has_extra': True},
     {'name': '方图标', 'filename_prefix': 's', 'sub_url': 's', 'suffix': 'jpg', 'has_extra': True},
+    {'name': '召唤图', 'filename_prefix': 'cutin', 'sub_url': 'cutin', 'suffix': 'jpg', 'has_extra': True},
     {'name': '主召图标', 'filename_prefix': 'party_main', 'sub_url': 'party_main', 'suffix': 'jpg', 'has_extra': True},
     {'name': '副召图标', 'filename_prefix': 'party_sub', 'sub_url': 'party_sub', 'suffix': 'jpg', 'has_extra': True},
 ]

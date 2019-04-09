@@ -15,6 +15,7 @@ IMG_CONFIG = [
     {'name': '横图标', 'filename_prefix': 'm', 'sub_url': 'm', 'suffix': 'jpg', 'has_extra': True},
     {'name': '方图标', 'filename_prefix': 's', 'sub_url': 's', 'suffix': 'jpg', 'has_extra': True},
     {'name': '主武器图标', 'filename_prefix': 'ls', 'sub_url': 'ls', 'suffix': 'jpg', 'has_extra': True},
+    {'name': '战斗用图', 'filename_prefix': 'cjs', 'sub_url': 'cjs', 'suffix': 'png', 'has_extra': True},
 ]
 
 
@@ -39,7 +40,8 @@ def weapon(cfg):
     downloader = Downloader()
     downloader.set_try_count(retry_times)
 
-    npc_base_url = cfg['base_url'] + 'assets/weapon'
+    weapon_base_url = cfg['base_url'] + 'assets/weapon'
+    cjs_base_url = cfg['base_url'] + 'cjs'
 
     for weapon_id, weapon_info in tabx:
         # 生成需要下载的list
@@ -47,10 +49,19 @@ def weapon(cfg):
 
         for config in IMG_CONFIG:
             img_base_name = str(weapon_id)
-            img_name_list = [img_base_name]
+            if config['sub_url'] == 'cjs':
+                if weapon_info['kind'] == 7:
+                    img_name_list = ['%s_1' % img_base_name, '%s_2' % img_base_name]
+                else:
+                    img_name_list = [img_base_name]
+            else:
+                img_name_list = [img_base_name]
 
             for img_name in img_name_list:
-                img_url = '%s/%s/%s.%s' % (npc_base_url, config["sub_url"], img_name, config["suffix"])
+                if config['sub_url'] == 'cjs':
+                    img_url = '%s/%s.%s' % (cjs_base_url, img_name, config["suffix"])
+                else:
+                    img_url = '%s/%s/%s.%s' % (weapon_base_url, config["sub_url"], img_name, config["suffix"])
                 if img_url in skip_list:
                     continue
 
