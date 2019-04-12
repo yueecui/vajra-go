@@ -18,7 +18,10 @@ def gbf_wiki_page_updater(cfg, args):
         raise Exception('获取TOKEN失败，请稍后再试')
 
     if args.command == 'all':
-        pass
+        update_weapon_tabx(cfg, args)
+        update_weapon_page(cfg, args)
+        update_summon_tabx(cfg, args)
+        update_summon_page(cfg, args)
     elif args.command == 'summon':
         update_summon_tabx(cfg, args)
         update_summon_page(cfg, args)
@@ -323,9 +326,9 @@ def generate_weapon_row(weapon_id):
         'link_gamewith': 0,
         'link_jpwiki': '',
         'link_kamigame': '',
-        'user_level': note_data_jp['user_level'],
-        'max_hp': note_data_jp['max_hp'],
-        'max_atk': note_data_jp['max_attack'],
+        'user_level': int(note_data_jp['user_level']),
+        'max_hp': int(note_data_jp['max_hp']),
+        'max_atk': int(note_data_jp['max_attack']),
         'evo4_hp': 0,
         'evo4_atk': 0,
         'evo5_hp': 0,
