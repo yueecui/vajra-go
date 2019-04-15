@@ -5,7 +5,7 @@ from SaveToExcel import save_to_excel
 from danteng_lib import save_to_csv, load_json
 
 
-JSON_PATH = r'E:\GBF\data\item.json'
+JSON_PATH = r'E:\GBF\data\item2.json'
 
 
 # 根据读取到的数据修改

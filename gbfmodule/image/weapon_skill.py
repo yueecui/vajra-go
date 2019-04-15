@@ -5,8 +5,6 @@ import os
 from config import IMAGE_PATH, IMAGE_NEW_PATH, IMAGE_WEAPON_SKILL_PATH, DATA_PATH
 from ..data.sim import GBFSim
 
-DOWNLOAD_TYPE = 'weapon_skill'
-
 
 def weapon_skill(cfg):
     # 开关
