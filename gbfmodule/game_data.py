@@ -25,3 +25,10 @@ def find_new_game_data(cfg, args):
     else:
         gbf_sim.check_new_weapon_data()
         gbf_sim.check_new_summon_data()
+
+
+# 重新下载所有数据
+def reload_all_data(cfg, args):
+    gbf_sim = GBFSim(cfg)
+
+    gbf_sim.reload_weapon_data()

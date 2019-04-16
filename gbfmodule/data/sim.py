@@ -316,7 +316,6 @@ class GBFSim:
 
     # 下载武器图鉴数据
     def download_weapon_data(self):
-        # 切语言到日文
         self._download_new_weapon_data()
         if (self._game_db['weapon']['total'] + int(self._cfg['SIM']['miss_weapon_count']) < self._game_db['new'][
             'weapon']) and self._cfg['SIM']['download_miss_weapon'] == 'yes':
@@ -455,19 +454,22 @@ class GBFSim:
     def _try_download_weapon_info(self, type_id, rarity_id, weapon_id, lang='jp'):
         return self._try_download_weapon_info_by_id(get_weapon_id(type_id, rarity_id, weapon_id), lang)
 
-    def _try_download_weapon_info_by_id(self, weapon_id, lang='jp'):
+    def _try_download_weapon_info_by_id(self, weapon_id, lang='jp', reload=False):
         guess_filename = f'{weapon_id}.json'
         local_path = os.path.join(DATA_PATH, 'weapon', lang, guess_filename)
         # 本地已经存在，返回0
-        if os.path.exists(local_path):
+        if not reload and os.path.exists(local_path):
             return 0
         # 本地不存在，向服务器请求
         weapon_result = self._request_weapon_detail(weapon_id)
         # 服务器存在并保存返回1
         if weapon_result['status_code'] == 200:
-            self._weapon_db_add_item_by_filename(guess_filename)
             save_json(weapon_result['data'], local_path)
-            log('武器[%s] %s 数据保存完毕' % (weapon_id, weapon_result['data']['name']))
+            if not reload:
+                self._weapon_db_add_item_by_filename(guess_filename)
+                log('武器[%s] %s 数据保存完毕' % (weapon_id, weapon_result['data']['name']))
+            else:
+                log('武器[%s] %s 数据更新完毕' % (weapon_id, weapon_result['data']['name']))
             return 1
         # 服务器不存在，返回-1
         elif weapon_result['status_code'] == 500:
@@ -488,6 +490,57 @@ class GBFSim:
         }
         data_text = json.dumps(data, separators=(',', ':'))
         return self._post(request_url, data_text=data_text)
+
+    # 重新下载武器数据
+    def reload_weapon_data(self):
+        # 先更新日文数据
+        self.set_language(1)
+        log('')
+        log('============================================')
+        log('= 重新下载所有武器数据【图鉴日文】')
+        log('============================================')
+
+        # 从本地文件中检索（只检索日文版的数据）
+        data_base_jp_path = os.path.join(DATA_PATH, 'weapon', 'jp')
+        if not os.path.exists(data_base_jp_path):
+            return -1
+        weapon_json_filename_list = os.listdir(data_base_jp_path)
+        for filename in weapon_json_filename_list:
+            full_path = os.path.join(data_base_jp_path, filename)
+            if os.path.getsize(full_path) == 0:
+                continue
+            weapon_info = get_item_info_from_filename(filename)
+
+            self._try_download_weapon_info_by_id(weapon_info['id'], reload=True)
+
+        # 更新商店版本数据
+        log('')
+        log('============================================')
+        log('= 重新下载所有武器数据【商店日文】')
+        log('============================================')
+
+        for filename in weapon_json_filename_list:
+            full_path = os.path.join(data_base_jp_path, filename)
+            if os.path.getsize(full_path) == 0:
+                continue
+            weapon_info = get_item_info_from_filename(filename)
+
+            self._try_download_weapon_shop_info_by_id(weapon_info['id'], reload=True)
+
+        # 更新英文版数据
+        log('')
+        log('============================================')
+        log('= 重新下载所有武器数据【图鉴英文】')
+        log('============================================')
+
+        self.set_language(2)
+        for filename in weapon_json_filename_list:
+            full_path = os.path.join(data_base_jp_path, filename)
+            if os.path.getsize(full_path) == 0:
+                continue
+            weapon_info = get_item_info_from_filename(filename)
+
+            self._try_download_weapon_info_by_id(weapon_info['id'], lang='en', reload=True)
 
     # 下载召唤石数据
     def download_summon_data(self):
@@ -863,18 +916,21 @@ class GBFSim:
     def _try_download_weapon_shop_info(self, type_id, rarity_id, weapon_id):
         return self._try_download_weapon_shop_info_by_id(get_weapon_id(type_id, rarity_id, weapon_id))
 
-    def _try_download_weapon_shop_info_by_id(self, weapon_id):
+    def _try_download_weapon_shop_info_by_id(self, weapon_id, reload=False):
         guess_filename = f'{weapon_id}.json'
-        local_path = os.path.join(DATA_PATH, 'shop_miss', guess_filename)
+        miss_local_path = os.path.join(DATA_PATH, 'shop_miss', guess_filename)
+        bak_local_path = os.path.join(DATA_PATH, 'weapon', 'shop', guess_filename)
         # 本地已经存在，返回0
-        if os.path.exists(local_path):
+        if not reload and os.path.exists(miss_local_path):
             return 0
         # 本地不存在，向服务器请求
         weapon_result = self._request_shop_detail(weapon_id, 1)
         # 服务器存在并保存返回1
         if weapon_result['status_code'] == 200:
             if weapon_result['data']['data']['id']:
-                save_json(weapon_result['data'], local_path)
+                if not reload:
+                    save_json(weapon_result['data'], miss_local_path)
+                save_json(weapon_result['data'], bak_local_path)
                 log('【商店】武器[%s] %s 数据保存完毕' % (weapon_id, weapon_result['data']['data']['name']))
                 return 1
             else:

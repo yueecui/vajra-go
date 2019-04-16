@@ -180,12 +180,21 @@ def new_weapon_page(weapon_id):
         page_content_rows.append('}}')
 
         if 'skill2' in note_data_jp and note_data_jp['skill2']:
-            page_content_rows.append('')
             page_content_rows.append('{{武器技能')
             page_content_rows.append('|name=' + note_data_jp["skill2"]["name"])
             page_content_rows.append('|name_chs=')
             page_content_rows.append('|icon=' + note_data_jp["skill2"]["image"])
             page_content_rows.append('|desc=' + note_data_jp["skill2"]["comment"])
+            page_content_rows.append('|use_desc=no')
+            page_content_rows.append('|tag=')
+            page_content_rows.append('}}')
+
+        if 'skill3' in note_data_jp and note_data_jp['skill3']:
+            page_content_rows.append('{{武器技能')
+            page_content_rows.append('|name=' + note_data_jp["skill3"]["name"])
+            page_content_rows.append('|name_chs=')
+            page_content_rows.append('|icon=' + note_data_jp["skill3"]["image"])
+            page_content_rows.append('|desc=' + note_data_jp["skill3"]["comment"])
             page_content_rows.append('|use_desc=no')
             page_content_rows.append('|tag=')
             page_content_rows.append('}}')
