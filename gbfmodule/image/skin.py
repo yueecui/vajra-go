@@ -20,6 +20,7 @@ IMG_CONFIG = [
     {'name': '奥义横图', 'filename_prefix': 'cutin', 'sub_url': 'cutin_special', 'suffix': 'jpg', 'has_extra': True, 'skip_index': [], 'multi_element': True, 'skin': False, 'multi': True, 'multi_allow_index': ['01']},
     # {'name': '推特图', 'filename_prefix': 'sns', 'sub_url': 'sns', 'suffix': 'jpg', 'has_extra': True, 'skip_index': ['02'], 'multi_element': False, 'skin': False, 'multi': True, 'multi_disable_normal': True},
 
+    {'name': '列表大图', 'filename_prefix': 'skin', 'sub_url': 'skin', 'suffix': 'png', 'has_extra': True, 'skip_index': [], 'multi_element': True, 'skin': False, 'multi': True},
     {'name': '皮肤方图标', 'filename_prefix': 'skin_s', 'folder': 'skin', 'sub_url': 's/skin', 'suffix': 'jpg', 'has_extra': True, 'skip_index': [], 'multi_element': False, 'skin': True, 'multi': True},
     {'name': '皮肤编成图标', 'filename_prefix': 'skin_f', 'folder': 'skin', 'sub_url': 'f/skin', 'suffix': 'jpg', 'has_extra': True, 'skip_index': [], 'multi_element': False, 'skin': True, 'multi': True},
 ]
@@ -52,6 +53,8 @@ def skin(cfg):
     npc_base_url = cfg['base_url'] + 'assets/npc'
 
     for npc_id, npc_info in tabx:
+        if npc_id == 0:
+            continue
         # 生成需要下载的list
         index_list = ['01']
 
@@ -95,7 +98,7 @@ def skin(cfg):
                     })
 
         if len(work_list) > 0:
-            log('开始下载角色 %s(%d) 的图片资源（共%d个）' % (npc_info["name_chs"], npc_id, len(work_list)))
+            log('开始下载角色 %s(%d) 的图片资源（共%d个）' % (npc_info["comment"], npc_id, len(work_list)))
             for work_info in work_list:
                 if save_to_new:
                     downloader.download_multi_copies(work_info['url'], [work_info['path'], work_info['new']])

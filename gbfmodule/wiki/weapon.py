@@ -54,6 +54,7 @@ def generate_weapon_row(weapon_id):
         'release_date': time.strftime("##%Y-%m-%d", time.localtime()),
         'star4_date': '',
         'star5_date': '',
+        'unlock_char': 0,
         'link_enwiki': '',
         'link_gamewith': 0,
         'link_jpwiki': '',
@@ -68,7 +69,12 @@ def generate_weapon_row(weapon_id):
         'base_evo': 3,
         'max_evo': 3,
         'is_archaic': False,
+        'sk_icon': [],
     }
+
+    for skill_key in ['skill1', 'skill2', 'skill3']:
+        if skill_key in note_data_jp and not (note_data_jp[skill_key] is None):
+            temp_row['sk_icon'].append(note_data_jp[skill_key]['image'])
 
     return temp_row
 

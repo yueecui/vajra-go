@@ -35,7 +35,7 @@ def weapon_skill(cfg):
         for skill_key in ['skill1', 'skill2']:
             if skill_key not in weapon_info or not weapon_info[skill_key]:
                 continue
-            skill_icon_name = weapon_info[skill_key]['image']
+            skill_icon_name = weapon_info[skill_key]['image'].strip()
 
             save_filename = f'WS_{skill_icon_name}.png'
             save_path = os.path.join(IMAGE_PATH, IMAGE_WEAPON_SKILL_PATH, save_filename)

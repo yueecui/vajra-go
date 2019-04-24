@@ -7,7 +7,7 @@ from danteng_lib import log, read_file, load_json
 from config import WIKITEXT_SYNC_PATH, DATA_PATH, SKIP_WEAPON_ID_LIST_PATH, ELEMENT_JP_TO_CHS, IMAGE_PATH
 
 
-item_jp_json_path = r'data\item_jp.json'
+item_jp_json_path = r'data\item_dalao.json'
 item_en_json_path = r'data\item_en.json'
 
 
@@ -22,7 +22,8 @@ def update_item_tabx(cfg, args):
 
     for item_info in item_jp_json:
         item_id = int(item_info['item_id'])
-        item_tabx.mod_row(item_id, generate_item_row(item_info))
+        row_info = item_tabx.get_row(item_id)
+        item_tabx.mod_row(item_id, generate_item_row(item_info, row_info))
 
     # 从本地json添加新数据
     item_en_json = load_json(item_en_json_path)
@@ -54,18 +55,21 @@ def update_item_tabx(cfg, args):
     item_tabx.save()
 
 
-def generate_item_row(item_info):
+def generate_item_row(item_info, row_info=None):
+    if row_info is None:
+        row_info = {}
+
     # 召唤石图鉴数据
     temp_row = {
         'name_jp': item_info['name'],
-        'name_en': '',
-        'name_chs': '',
-        'search_nickname': [],
+        'name_en': row_info['name_en'] if 'name_en' in row_info else '',
+        'name_chs': row_info['name_chs'] if 'name_chs' in row_info else '',
+        'search_nickname': row_info['search_nickname'] if 'search_nickname' in row_info else [],
         'seq_id': int(item_info['seq_id']),
         'category_type': item_info['category_type'],
         'comment_jp': item_info['comment'].replace('\n', '<br>').strip(),
-        'comment_en': '',
-        'comment_chs': '',
+        'comment_en': row_info['comment_en'] if 'comment_en' in row_info else '',
+        'comment_chs': row_info['comment_chs'] if 'comment_chs' in row_info else '',
     }
     return temp_row
 
@@ -84,8 +88,6 @@ def update_item_page(cfg, args):
     gbf_wiki = cfg['wiki']
 
     for item_id in gbf_sim.all_item():
-        if int(item_id) in skip_item_id_list:
-            continue
         page_title = f'Weapon/{item_id}'
         page_content = new_item_page(item_id)
 

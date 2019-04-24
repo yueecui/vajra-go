@@ -804,7 +804,6 @@ class GBFSim:
             "evolution_step": "3",
             "is_new": False,
             "special_token": None,
-            "status": 1,
         }
         data_text = json.dumps(data, separators=(',', ':'))
         return self._post(request_url, data_text=data_text)
