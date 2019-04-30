@@ -43,6 +43,8 @@ def summon(cfg):
     npc_base_url = cfg['base_url'] + 'assets/summon'
 
     for summon_id, summon_info in tabx:
+        if summon_id == 0:
+            continue
         # 生成需要下载的list
         index_list = ['']
         for uncap_index in summon_info['uncap_img']:

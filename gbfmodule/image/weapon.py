@@ -44,6 +44,8 @@ def weapon(cfg):
     cjs_base_url = cfg['base_url'] + 'cjs'
 
     for weapon_id, weapon_info in tabx:
+        if weapon_id == 0:
+            continue
         # 生成需要下载的list
         work_list = []
 

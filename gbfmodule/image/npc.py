@@ -57,6 +57,9 @@ def npc(cfg):
     npc_base_url = cfg['base_url'] + 'assets/npc'
 
     for npc_id, npc_info in tabx:
+        if npc_id == 0:
+            continue
+
         # 生成需要下载的list
         index_list = ['01', '02']
         if npc_info['max_evo'] == 5:
