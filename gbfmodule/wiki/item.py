@@ -7,7 +7,7 @@ from danteng_lib import log, read_file, load_json
 from config import WIKITEXT_SYNC_PATH, DATA_PATH, SKIP_WEAPON_ID_LIST_PATH, ELEMENT_JP_TO_CHS, IMAGE_PATH
 
 
-item_jp_json_path = r'data\item_dalao.json'
+item_jp_json_path = r'data\item_jp.json'
 item_en_json_path = r'data\item_en.json'
 
 

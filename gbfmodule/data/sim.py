@@ -10,7 +10,6 @@ import json
 from danteng_lib import log, save_json, load_json
 from config import *
 
-
 GAME_HOST = 'http://game.granbluefantasy.jp'
 
 
@@ -45,7 +44,8 @@ class GBFSim:
         result = {
             'status_code': 0
         }
-        response = requests.post(url, cookies=self._cookies, headers=self._get_headers(rtype=rtype, data_text=data_text), data=data_text)
+        response = requests.post(url, cookies=self._cookies,
+                                 headers=self._get_headers(rtype=rtype, data_text=data_text), data=data_text)
         result['status_code'] = response.status_code
         if response.status_code == 200:
             try:
@@ -143,6 +143,7 @@ class GBFSim:
                     'max': -1,  # 最大ID，需要注意ID是从0开始的，所以max和count相等的时候，实际上是缺了1个的
                     'count': 0,
                     'miss': [],
+                    'angel': False,
                 }
 
         # 从本地文件中检索
@@ -161,12 +162,16 @@ class GBFSim:
 
         # 整理缺失index
         for type_id_int, weapon_name in WEAPON_TYPE_MAP.items():
+            if type_id_int == 99:
+                continue
             type_id = str(type_id_int)
             for rarity_id_int in RARITY_ID_LIST:
                 rarity_id = str(rarity_id_int)
 
                 record_info = weapon_db['record'][type_id][rarity_id]
                 miss_count = record_info['max'] + 1 - record_info['count']
+                if record_info['angel']:
+                    miss_count += 1
 
                 for index in range(0, record_info['max'] + 1):
                     if miss_count == 0:
@@ -185,7 +190,10 @@ class GBFSim:
         weapon_db['total'] += 1
 
         if weapon_info['index'] > record_info['max']:
-            record_info['max'] = weapon_info['index']
+            if weapon_info['index'] < 990:
+                record_info['max'] = weapon_info['index']
+            else:
+                record_info['angel'] = True
 
         # 检查英文版数据是否存在
         # en_filename = f'{weapon_info["id"]}.json'
@@ -339,7 +347,8 @@ class GBFSim:
 
         # 遍历所有武器和稀有度
         while True:
-            if self._game_db['weapon']['total'] + int(self._cfg['SIM']['miss_weapon_count']) == self._game_db['new']['weapon']:
+            if self._game_db['weapon']['total'] + int(self._cfg['SIM']['miss_weapon_count']) == self._game_db['new'][
+                'weapon']:
                 log('本地武器数据数量已经匹配最新数据数量')
                 break
 
@@ -371,8 +380,10 @@ class GBFSim:
                     # 先尝试往后猜新数据（之后再尝试检查miss表）
                     guess_next = True
                     while guess_next:
-                        guess_index_length_min = current_record['max'] + rarity_config['step'] * (guess_index_times[type_id_int][rarity_id_int] - 1) + 1
-                        guess_index_length_max = current_record['max'] + rarity_config['step'] * guess_index_times[type_id_int][rarity_id_int] + 1
+                        guess_index_length_min = current_record['max'] + rarity_config['step'] * (
+                                    guess_index_times[type_id_int][rarity_id_int] - 1) + 1
+                        guess_index_length_max = current_record['max'] + rarity_config['step'] * \
+                                                 guess_index_times[type_id_int][rarity_id_int] + 1
                         if guess_index_length_min == guess_index_length_max:
                             break
 
@@ -568,7 +579,8 @@ class GBFSim:
 
         # 遍历所有武器和稀有度
         while True:
-            if self._game_db['summon']['total'] + int(self._cfg['SIM']['miss_summon_count']) == self._game_db['new']['summon']:
+            if self._game_db['summon']['total'] + int(self._cfg['SIM']['miss_summon_count']) == self._game_db['new'][
+                'summon']:
                 log('本地召唤石数据数量已经匹配最新数据数量')
                 break
 
@@ -594,8 +606,10 @@ class GBFSim:
                 # 先尝试往后猜新数据（之后再尝试检查miss表）
                 guess_next = True
                 while guess_next:
-                    guess_index_length_min = current_record['max'] + rarity_config['step'] * (guess_index_times[rarity_id_int] - 1) + 1
-                    guess_index_length_max = current_record['max'] + rarity_config['step'] * guess_index_times[rarity_id_int] + 1
+                    guess_index_length_min = current_record['max'] + rarity_config['step'] * (
+                                guess_index_times[rarity_id_int] - 1) + 1
+                    guess_index_length_max = current_record['max'] + rarity_config['step'] * guess_index_times[
+                        rarity_id_int] + 1
                     if guess_index_length_min == guess_index_length_max:
                         break
 
@@ -829,7 +843,8 @@ class GBFSim:
 
         # 遍历所有武器和稀有度
         while True:
-            if self._game_db['weapon']['total'] + int(self._cfg['SIM']['miss_weapon_count']) == self._game_db['new']['weapon']:
+            if self._game_db['weapon']['total'] + int(self._cfg['SIM']['miss_weapon_count']) == self._game_db['new'][
+                'weapon']:
                 log('本地武器数据数量已经匹配最新数据数量')
                 break
 
@@ -861,8 +876,10 @@ class GBFSim:
                     # 先尝试往后猜新数据（之后再尝试检查miss表）
                     guess_next = True
                     while guess_next:
-                        guess_index_length_min = current_record['max'] + rarity_config['step'] * (guess_index_times[type_id_int][rarity_id_int] - 1) + 1
-                        guess_index_length_max = current_record['max'] + rarity_config['step'] * guess_index_times[type_id_int][rarity_id_int] + 1
+                        guess_index_length_min = current_record['max'] + rarity_config['step'] * (
+                                    guess_index_times[type_id_int][rarity_id_int] - 1) + 1
+                        guess_index_length_max = current_record['max'] + rarity_config['step'] * \
+                                                 guess_index_times[type_id_int][rarity_id_int] + 1
                         if guess_index_length_min == guess_index_length_max:
                             break
 
@@ -968,7 +985,8 @@ class GBFSim:
 
         # 遍历所有武器和稀有度
         while True:
-            if self._game_db['summon']['total'] + int(self._cfg['SIM']['miss_summon_count']) == self._game_db['new']['summon']:
+            if self._game_db['summon']['total'] + int(self._cfg['SIM']['miss_summon_count']) == self._game_db['new'][
+                'summon']:
                 log('本地召唤石数据数量已经匹配最新数据数量')
                 break
 
@@ -994,8 +1012,10 @@ class GBFSim:
                 # 先尝试往后猜新数据（之后再尝试检查miss表）
                 guess_next = True
                 while guess_next:
-                    guess_index_length_min = current_record['max'] + rarity_config['step'] * (guess_index_times[rarity_id_int] - 1) + 1
-                    guess_index_length_max = current_record['max'] + rarity_config['step'] * guess_index_times[rarity_id_int] + 1
+                    guess_index_length_min = current_record['max'] + rarity_config['step'] * (
+                                guess_index_times[rarity_id_int] - 1) + 1
+                    guess_index_length_max = current_record['max'] + rarity_config['step'] * guess_index_times[
+                        rarity_id_int] + 1
                     if guess_index_length_min == guess_index_length_max:
                         break
 
@@ -1109,6 +1129,8 @@ class GBFSim:
                     if weapon_id in rarity_data['miss']:
                         continue
                     yield get_weapon_id(type_id, rarity_id, weapon_id)
+                if rarity_data['angel']:
+                    yield get_weapon_id(type_id, rarity_id, 990)
 
 
 def get_chrome_cookies(url, profile):
@@ -1154,12 +1176,11 @@ def get_double_timestamp():
 # 1位 - 固定为1，表示武器
 # 2位 - 固定为0
 # 3位 - 表示稀有度：N=1，R=2，SR=3，SSR=4
-# 4位 - 固定为0
-# 5位 - 武器类型
+# 4-5位 - 武器类型
 # 6-8位 - 类型内索引，从0开始
 # 9-10位 - 固定为0
 def get_weapon_id(type_id, rarity_id, weapon_id):
-    return '10%s0%s%03d00' % (rarity_id, type_id, weapon_id)
+    return '10%s%02d%03d00' % (rarity_id, int(type_id), weapon_id)
 
 
 # 根据条件生成召唤ID
@@ -1181,7 +1202,7 @@ def get_item_info_from_filename(filename):
         return None
     # 武器
     if filename[0] == '1':
-        find = re.findall(r'(\d0(\d)0(\d)(\d{3})00)\.?(:?json)?', filename)
+        find = re.findall(r'(\d0(\d)(\d{2})(\d{3})00)\.?(:?json)?', filename)
         if not find:
             return None
         info_tuple = find[0]

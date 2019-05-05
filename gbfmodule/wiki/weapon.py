@@ -148,15 +148,19 @@ def new_weapon_page(weapon_id):
     # 替换奥义文本
     charge_attack_find = re.findall(r'(.+?)属性ダメージ\(.+?\)(.*)', note_data_jp['special_skill']['comment'])
 
-    charge_text = charge_attack_find[0][0]
-    if charge_text == '武器':
-        charge_text = note_data_jp['attribute']
-    charge_text = f'对敌方单体造成{ELEMENT_JP_TO_CHS[charge_text]}属性伤害'
-    if charge_attack_find[0][1] != '':
-        charge_text += '<br><br>' + charge_attack_find[0][1]
+    if charge_attack_find:
+        charge_text = charge_attack_find[0][0]
+        if charge_text == '武器':
+            charge_text = note_data_jp['attribute']
+        charge_text = f'对敌方单体造成{ELEMENT_JP_TO_CHS[charge_text]}属性伤害'
 
-        page_content_rows.append('{{待整理}}')
-        page_content_rows.append('')
+        if charge_attack_find[0][1] != '':
+            charge_text += '<br><br>' + charge_attack_find[0][1]
+
+            page_content_rows.append('{{待整理}}')
+            page_content_rows.append('')
+    else:
+        charge_text = ''
 
     # 奥义
     page_content_rows.append('==奥义==')
