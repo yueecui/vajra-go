@@ -25,7 +25,7 @@ def gbf_wiki_page_updater(cfg, args):
         update_weapon_tabx(cfg, args)
         update_weapon_page(cfg, args)
     elif args.command == 'item':
-        update_item_tabx(cfg, args)
-        # update_weapon_page(cfg, args)
+        # update_item_tabx(cfg, args)
+        update_item_db_auto(cfg, args)
     else:
         print('错误的指令')

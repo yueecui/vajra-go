@@ -10,11 +10,8 @@ from ..data.sim import GBFSim
 
 def item(cfg):
     # 开关
-    save_to_new = False
     retry_times = 5
     if 'IMAGE' in cfg:
-        if 'new' in cfg['IMAGE'] and cfg['IMAGE']['new'].lower() == 'yes':
-            save_to_new = True
         if 'retry' in cfg['IMAGE']:
             try:
                 retry_times = int(cfg['IMAGE']['retry'])
