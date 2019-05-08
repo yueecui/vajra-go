@@ -4,7 +4,8 @@ import re
 from huijiWiki import HuijiWiki
 from huijiWikiTabx import HuijiWikiTabx
 from danteng_lib import log, read_file, load_json
-from config import WIKITEXT_SYNC_PATH, DATA_PATH, SKIP_WEAPON_ID_LIST_PATH, ELEMENT_JP_TO_CHS
+from config import WIKITEXT_PATH, WIKITEXT_SYNC_PATH, DATA_PATH, SKIP_WEAPON_ID_LIST_PATH, ELEMENT_JP_TO_CHS
+from pyvar_to_lua import pyvar_to_lua
 
 
 def update_weapon_tabx(cfg, args):
@@ -30,7 +31,7 @@ def update_weapon_tabx(cfg, args):
     if tabx_mod:
         weapon_tabx.save()
     else:
-        log('[[%s]]没有修改。' % cfg["TABX"]["summon"])
+        log('[[%s]]没有修改。' % cfg["TABX"]["weapon"])
 
 
 def generate_weapon_row(weapon_id):
@@ -155,7 +156,10 @@ def new_weapon_page(weapon_id):
         charge_text = f'对敌方单体造成{ELEMENT_JP_TO_CHS[charge_text]}属性伤害'
 
         if charge_attack_find[0][1] != '':
-            charge_text += '<br><br>' + charge_attack_find[0][1]
+            extra_text = charge_attack_find[0][1]
+            if extra_text[0:1] == '/':
+                extra_text = extra_text[1:]
+            charge_text += '<br><br>' + extra_text
 
             page_content_rows.append('{{待整理}}')
             page_content_rows.append('')
@@ -215,3 +219,40 @@ def new_weapon_page(weapon_id):
     page_content_rows.append('{{武器信息|结束}}')
 
     return '\n'.join(page_content_rows)
+
+
+def update_weapon_auto_db(cfg, args):
+    gbf_wiki = cfg['wiki']
+    tabx_page_title = f'Data:{cfg["TABX"]["weapon"]}.tabx'
+
+    item_tabx = HuijiWikiTabx(gbf_wiki, tabx_page_title, 'ID')
+
+    item_db_auto = {}
+
+    for item_id, item_info in item_tabx.get_all_data().items():
+        item_db_auto[item_id] = {
+            'id': item_id,
+            'name': item_info['name_chs'] if item_info['name_chs'] else item_info['name_jp']
+        }
+
+    output = []
+
+    output.append('----------------------------------------------')
+    output.append('-- 本文件由机器人自动维护，请勿手工修改')
+    output.append('-- 内容来源：[[Data:武器列表.tabx]]')
+    output.append('-- 手工添加请访问：[[Module:Util/LinkNickname]]')
+    output.append('----------------------------------------------')
+    output.append('')
+    output.append('local p = {}')
+    output.append('')
+    output.append('p.db = ' + pyvar_to_lua(item_db_auto).dump_to_luatable())
+    output.append('')
+    output.append('return p')
+
+    page_title = 'Module:Weapon/AutoDB'
+    page_content = '\n'.join(output)
+
+    wikitext_file_path = os.path.join(WIKITEXT_PATH, gbf_wiki.filename_fix(f'{page_title}.txt'))
+
+    gbf_wiki.edit(page_title, page_content, filepath=wikitext_file_path, compare_flag=True)
+    gbf_wiki.wait_threads()

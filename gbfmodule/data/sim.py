@@ -14,12 +14,15 @@ GAME_HOST = 'http://game.granbluefantasy.jp'
 
 
 class GBFSim:
-    def __init__(self, cfg):
+    def __init__(self, cfg, check_ver=True):
         self._cfg = cfg
         self._cookies = get_game_cookies(cfg)
         self._version = None
         self._game_db = {}
-        self._login()
+        self._is_login = False
+        if check_ver:
+            self._is_login = True
+            self._login()
 
         # 初始化本地数据
         self._init_local_db()
@@ -90,23 +93,24 @@ class GBFSim:
         game_db = self._game_db
 
         # 播报新数据信息
-        new_msg = ''
-        if game_db['weapon']['total'] > 0:
-            total_count = game_db['weapon']['total'] + int(self._cfg['SIM']['miss_weapon_count'])
-            if total_count == game_db['new']["weapon"]:
-                new_msg = '（无新增）'
-            else:
-                new_msg = '（本地差 %d 个）' % (game_db['new']["weapon"] - total_count)
-        log(f'当前总武器数量：{game_db["new"]["weapon"]}{new_msg}')
+        if self._is_login:
+            new_msg = ''
+            if game_db['weapon']['total'] > 0:
+                total_count = game_db['weapon']['total'] + int(self._cfg['SIM']['miss_weapon_count'])
+                if total_count == game_db['new']["weapon"]:
+                    new_msg = '（无新增）'
+                else:
+                    new_msg = '（本地差 %d 个）' % (game_db['new']["weapon"] - total_count)
+            log(f'当前总武器数量：{game_db["new"]["weapon"]}{new_msg}')
 
-        new_msg = ''
-        if game_db['summon']['total'] > 0:
-            total_count = game_db['summon']['total'] + int(self._cfg['SIM']['miss_summon_count'])
-            if total_count == game_db['new']["summon"]:
-                new_msg = '（无新增）'
-            else:
-                new_msg = '（本地差 %d 个）' % (game_db['new']["summon"] - total_count)
-        log(f'当前总召唤石数量：{game_db["new"]["summon"]}{new_msg}')
+            new_msg = ''
+            if game_db['summon']['total'] > 0:
+                total_count = game_db['summon']['total'] + int(self._cfg['SIM']['miss_summon_count'])
+                if total_count == game_db['new']["summon"]:
+                    new_msg = '（无新增）'
+                else:
+                    new_msg = '（本地差 %d 个）' % (game_db['new']["summon"] - total_count)
+            log(f'当前总召唤石数量：{game_db["new"]["summon"]}{new_msg}')
 
     # 将当前状态保存
     def _save_statistics(self):

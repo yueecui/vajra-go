@@ -3,7 +3,8 @@ import time
 from huijiWiki import HuijiWiki
 from huijiWikiTabx import HuijiWikiTabx
 from danteng_lib import log, read_file, load_json
-from config import WIKITEXT_SYNC_PATH, DATA_PATH, SKIP_SUMMON_ID_LIST_PATH
+from config import WIKITEXT_PATH, WIKITEXT_SYNC_PATH, DATA_PATH, SKIP_SUMMON_ID_LIST_PATH
+from pyvar_to_lua import pyvar_to_lua
 
 
 def update_summon_tabx(cfg, args):
@@ -247,3 +248,40 @@ def new_summon_page(summon_id):
     page_content_rows.append('{{召唤石信息|结束}}')
 
     return '\n'.join(page_content_rows)
+
+
+def update_summon_auto_db(cfg, args):
+    gbf_wiki = cfg['wiki']
+    tabx_page_title = f'Data:{cfg["TABX"]["summon"]}.tabx'
+
+    item_tabx = HuijiWikiTabx(gbf_wiki, tabx_page_title, 'ID')
+
+    item_db_auto = {}
+
+    for item_id, item_info in item_tabx.get_all_data().items():
+        item_db_auto[item_id] = {
+            'id': item_id,
+            'name': item_info['name_chs'] if item_info['name_chs'] else item_info['name_jp']
+        }
+
+    output = []
+
+    output.append('----------------------------------------------')
+    output.append('-- 本文件由机器人自动维护，请勿手工修改')
+    output.append('-- 内容来源：[[Data:召唤石列表.tabx]]')
+    output.append('-- 手工添加请访问：[[Module:Util/LinkNickname]]')
+    output.append('----------------------------------------------')
+    output.append('')
+    output.append('local p = {}')
+    output.append('')
+    output.append('p.db = ' + pyvar_to_lua(item_db_auto).dump_to_luatable())
+    output.append('')
+    output.append('return p')
+
+    page_title = 'Module:Summon/AutoDB'
+    page_content = '\n'.join(output)
+
+    wikitext_file_path = os.path.join(WIKITEXT_PATH, gbf_wiki.filename_fix(f'{page_title}.txt'))
+
+    gbf_wiki.edit(page_title, page_content, filepath=wikitext_file_path, compare_flag=True)
+    gbf_wiki.wait_threads()

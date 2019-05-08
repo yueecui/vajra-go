@@ -81,7 +81,7 @@ def blank_item_row():
     }
 
 
-def update_item_db_auto(cfg, args):
+def update_item_auto_db(cfg, args):
     gbf_wiki = cfg['wiki']
     tabx_page_title = f'Data:{cfg["TABX"]["item"]}.tabx'
 
@@ -91,9 +91,13 @@ def update_item_db_auto(cfg, args):
     item_replace_map = {}
 
     for item_id, item_info in item_tabx.get_all_data().items():
+        item_name = item_info['name_chs'] if item_info['name_chs'] else item_info['name_jp']
+        if not item_name:
+            continue
+
         item_db_auto[item_id] = {
             'id': item_id,
-            'name': item_info['name_chs'] if item_info['name_chs'] else item_info['name_jp']
+            'name': item_name
         }
 
         if not item_info['name_chs']:
@@ -121,7 +125,7 @@ def update_item_db_auto(cfg, args):
     output.append('')
     output.append('return p')
 
-    page_title = 'Module:Item/ItemDBAuto'
+    page_title = 'Module:Item/AutoDB'
     page_content = '\n'.join(output)
 
     wikitext_file_path = os.path.join(WIKITEXT_PATH, gbf_wiki.filename_fix(f'{page_title}.txt'))
