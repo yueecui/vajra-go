@@ -94,11 +94,10 @@ def update_item_auto_db(cfg, args):
         item_name = item_info['name_chs'] if item_info['name_chs'] else item_info['name_jp']
         if not item_name:
             continue
+        if item_id == 0:
+            continue
 
-        item_db_auto[item_id] = {
-            'id': item_id,
-            'name': item_name
-        }
+        item_db_auto[item_id] = item_name
 
         if not item_info['name_chs']:
             continue

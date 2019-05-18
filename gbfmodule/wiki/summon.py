@@ -259,10 +259,9 @@ def update_summon_auto_db(cfg, args):
     item_db_auto = {}
 
     for item_id, item_info in item_tabx.get_all_data().items():
-        item_db_auto[item_id] = {
-            'id': item_id,
-            'name': item_info['name_chs'] if item_info['name_chs'] else item_info['name_jp']
-        }
+        if item_id == 0:
+            continue
+        item_db_auto[item_id] = item_info['name_chs'] if item_info['name_chs'] else item_info['name_jp']
 
     output = []
 
