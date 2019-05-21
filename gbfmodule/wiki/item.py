@@ -67,6 +67,7 @@ def generate_item_row(item_info, row_info=None):
         'element': row_info['element'] if 'element' in row_info else 0,
         'seq_id': int(item_info['seq_id']),
         'category_type': item_info['category_type'],
+        'link_enwiki': row_info['link_enwiki'] if 'link_enwiki' in row_info else '',
         'comment_jp': item_info['comment'].replace('\n', '<br>').strip(),
         'comment_en': row_info['comment_en'] if 'comment_en' in row_info else '',
         'comment_chs': row_info['comment_chs'] if 'comment_chs' in row_info else '',
