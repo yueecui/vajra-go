@@ -10,6 +10,7 @@ DOWNLOAD_TYPE = {
     'weapon': weapon,
     'weapon_skill': weapon_skill,
     'item': item,
+    'leader': leader,
 }
 
 

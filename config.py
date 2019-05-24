@@ -2,6 +2,7 @@
 IMAGE_PATH = 'IMAGE'
 IMAGE_NEW_PATH = 'new'
 IMAGE_NPC_PATH = 'npc'
+IMAGE_LEADER_PATH = 'leader'
 IMAGE_SKIN_PATH = 'skin'
 IMAGE_SUMMON_PATH = 'summon'
 IMAGE_WEAPON_PATH = 'weapon'
