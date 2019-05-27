@@ -26,10 +26,13 @@ def gbf_wiki_page_updater(cfg, args):
         update_item_auto_db(cfg, args)
     elif args.command == 'char':
         update_character_auto_db(cfg, args)
+    elif args.command == 'leader':
+        update_leader_auto_db(cfg, args)
     elif args.command == 'autodb':
         update_summon_auto_db(cfg, args)
         update_weapon_auto_db(cfg, args)
-        update_character_auto_db(cfg, args)
         update_item_auto_db(cfg, args)
+        update_character_auto_db(cfg, args)
+        update_leader_auto_db(cfg, args)
     else:
         print('错误的指令')
