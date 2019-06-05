@@ -75,7 +75,7 @@ def generate_weapon_row(weapon_id):
 
     for skill_key in ['skill1', 'skill2', 'skill3']:
         if skill_key in note_data_jp and not (note_data_jp[skill_key] is None):
-            temp_row['sk_icon'].append(note_data_jp[skill_key]['image'])
+            temp_row['sk_icon'].append(note_data_jp[skill_key]['image'].strip())
 
     return temp_row
 
