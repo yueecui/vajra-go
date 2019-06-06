@@ -22,6 +22,7 @@ IMG_CONFIG = [
     {'name': '战斗图标', 'filename_prefix': 'raid', 'sub_url': 'raid_normal', 'suffix': 'jpg', 'has_extra': True, 'skip_index': [], 'multi_element': True, 'skin': False, 'multi': True},
     {'name': '模组', 'filename_prefix': 'sd', 'sub_url': 'sd', 'suffix': 'png', 'has_extra': False, 'skip_index': [], 'multi_element': True, 'skin': False, 'multi': False},
     {'name': '奥义横图', 'filename_prefix': 'cutin', 'sub_url': 'cutin_special', 'suffix': 'jpg', 'has_extra': True, 'skip_index': [], 'multi_element': True, 'skin': False, 'multi': True, 'multi_allow_index': ['01']},
+    {'name': '奥义连锁图', 'filename_prefix': 'chain', 'sub_url': 'raid_chain', 'suffix': 'jpg', 'has_extra': True, 'skip_index': [], 'multi_element': True, 'skin': False, 'multi': True},
     {'name': '推特图', 'filename_prefix': 'sns', 'sub_url': 'sns', 'suffix': 'jpg', 'has_extra': True, 'skip_index': ['02'], 'multi_element': False, 'skin': False, 'multi': True, 'multi_disable_normal': True},
 
     {'name': '皮肤方图标', 'filename_prefix': 'skin_s', 'folder': 'skin', 'sub_url': 's/skin', 'suffix': 'jpg', 'has_extra': True, 'skip_index': [], 'multi_element': False, 'skin': True, 'multi': True},
