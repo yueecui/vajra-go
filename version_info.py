@@ -7,8 +7,8 @@ VSVersionInfo(
   ffi=FixedFileInfo(
     # filevers and prodvers should be always a tuple with four items: (1, 2, 3, 4)
     # Set not needed items to zero 0.
-    filevers=(0, 1, 4, 17),
-    prodvers=(0, 1, 4, 17),
+    filevers=(0, 1, 5, 18),
+    prodvers=(0, 1, 5, 18),
     # Contains a bitmask that specifies the valid bits 'flags'r
     mask=0x3f,
     # Contains a bitmask that specifies the Boolean attributes of the file.
@@ -32,12 +32,12 @@ VSVersionInfo(
         u'040904B0',
         [StringStruct(u'CompanyName', u'Huijiwiki'),
         StringStruct(u'FileDescription', u'GBF Wiki bot'),
-        StringStruct(u'FileVersion', u'0.1.4.17 (Beta)'),
+        StringStruct(u'FileVersion', u'0.1.5.18 (Beta)'),
         StringStruct(u'InternalName', u'vajra_go'),
         StringStruct(u'LegalCopyright', u'Yuee, 2018-2019. All rights reserved.'),
         StringStruct(u'OriginalFilename', u'vajra_go.exe'),
         StringStruct(u'ProductName', u'GBF Wiki bot'),
-        StringStruct(u'ProductVersion', u'0.1.4.17')])
+        StringStruct(u'ProductVersion', u'0.1.5.18')])
       ]), 
     VarFileInfo([VarStruct(u'Translation', [2052, 1200])])
   ]
