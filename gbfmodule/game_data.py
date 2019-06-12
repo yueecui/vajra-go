@@ -32,3 +32,10 @@ def reload_all_data(cfg, args):
     gbf_sim = GBFSim(cfg)
 
     gbf_sim.reload_weapon_data()
+
+
+# 重新下载所有数据
+def download_all_news(cfg, args):
+    gbf_sim = GBFSim(cfg)
+
+    gbf_sim.download_all_news()

@@ -45,6 +45,7 @@ def generate_weapon_row(weapon_id):
         'series_name': note_data_jp['series_name'],
         'name_en': note_data_en['name'],
         'name_chs': '',
+        'tag_title': '',
         'nickname': [],
         'search_nickname': [],
         'element': int(note_data_jp['attribute']),

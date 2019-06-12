@@ -32,7 +32,7 @@ def weapon_skill(cfg):
         weapon_json_path = os.path.join(data_base_path, f'{weapon_id}.json')
         weapon_info = load_json(weapon_json_path)
 
-        for skill_key in ['skill1', 'skill2']:
+        for skill_key in ['skill1', 'skill2', 'skill3']:
             if skill_key not in weapon_info or not weapon_info[skill_key]:
                 continue
             skill_icon_name = weapon_info[skill_key]['image'].strip()

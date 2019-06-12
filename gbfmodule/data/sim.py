@@ -274,8 +274,8 @@ class GBFSim:
         mypage_html = result['text']
         # 查找游戏版本号
         find = re.findall(r'Game.version = "(\d+)";', mypage_html)
-        if not find:
-            log('【注意】没有找到游戏版本号')
+        if not find or len(find) == 0:
+            raise Exception('没有找到游戏版本号，可能需要刷新登录状态')
         self._version = find[0]
 
         # 查找游戏当前语言
@@ -435,6 +435,7 @@ class GBFSim:
 
     def _download_weapon_data_add(self):
         en_need_list = []
+        shop_need_list = []
         # 从本地文件中检索
         data_base_jp_path = os.path.join(DATA_PATH, 'weapon', 'jp')
         if not os.path.exists(data_base_jp_path):
@@ -446,12 +447,30 @@ class GBFSim:
                 continue
 
             weapon_info = get_item_info_from_filename(filename)
-
+            # 需要的商店数据
             data_base_path = os.path.join(DATA_PATH, 'weapon')
+            shop_filename = f'{weapon_info["id"]}.json'
+            shop_fullpath = os.path.join(data_base_path, 'shop', shop_filename)
+            if not (os.path.exists(shop_fullpath) and os.path.getsize(shop_fullpath) > 0):
+                shop_need_list.append(weapon_info["id"])
+
+            # 需要的英文版
             en_filename = f'{weapon_info["id"]}.json'
             en_fullpath = os.path.join(data_base_path, 'en', en_filename)
             if not (os.path.exists(en_fullpath) and os.path.getsize(en_fullpath) > 0):
                 en_need_list.append(weapon_info["id"])
+
+        log('')
+        log('============================================')
+        log('= 下载商店缺失数据')
+        log('============================================')
+
+        if len(shop_need_list) == 0:
+            log('没有缺失的英文版武器数据了')
+        else:
+            self.set_language(1)
+            for weapon_id in shop_need_list:
+                self._try_download_weapon_shop_info_by_id(weapon_id)
 
         log('')
         log('============================================')
@@ -460,11 +479,10 @@ class GBFSim:
 
         if len(en_need_list) == 0:
             log('没有缺失的英文版武器数据了')
-            return
-
-        self.set_language(2)
-        for weapon_id in en_need_list:
-            self._try_download_weapon_info_by_id(weapon_id, lang='en')
+        else:
+            self.set_language(2)
+            for weapon_id in en_need_list:
+                self._try_download_weapon_info_by_id(weapon_id, lang='en')
 
     def _try_download_weapon_info(self, type_id, rarity_id, weapon_id, lang='jp'):
         return self._try_download_weapon_info_by_id(get_weapon_id(type_id, rarity_id, weapon_id), lang)
@@ -1135,6 +1153,11 @@ class GBFSim:
                     yield get_weapon_id(type_id, rarity_id, weapon_id)
                 if rarity_data['angel']:
                     yield get_weapon_id(type_id, rarity_id, 990)
+
+    # 获取所有新闻
+    def download_all_news(self):
+        # TODO
+        pass
 
 
 def get_chrome_cookies(url, profile):

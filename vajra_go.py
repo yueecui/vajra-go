@@ -25,6 +25,10 @@ def main():
     extract_parser = subparsers.add_parser('reload', help='download game data')
     extract_parser.set_defaults(callback=reload_all_data)
 
+    # 重新下载数据
+    extract_parser = subparsers.add_parser('news', help='download game news')
+    extract_parser.set_defaults(callback=download_all_news)
+
     # 抓取游戏数据
     extract_parser = subparsers.add_parser('find', help='find new game data')
     extract_parser.add_argument('find_order', nargs='?', default='new', type=str)
