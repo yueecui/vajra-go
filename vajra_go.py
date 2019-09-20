@@ -44,6 +44,11 @@ def main():
     extract_parser.add_argument('command',  nargs='?', default='all', type=str)
     extract_parser.set_defaults(callback=gbf_wiki_page_updater)
 
+    # 上传图片
+    extract_parser = subparsers.add_parser('upload', help='upload all image')
+    extract_parser.add_argument('path', type=str)
+    extract_parser.set_defaults(callback=upload_image)
+
     # 获取解析后的参数
     args = parser.parse_args()
 

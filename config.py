@@ -20,6 +20,8 @@ SKIP_LIST_PATH = 'skip.txt'
 SKIP_SUMMON_ID_LIST_PATH = 'skip_summon.txt'
 SKIP_WEAPON_ID_LIST_PATH = 'skip_weapon.txt'
 
+SKIP_LOG = 'skip_log.txt'
+
 # 记录统计数据的json文件地址
 STATISTICS_JSON = 'game_db_bak.json'
 

@@ -30,7 +30,7 @@ def update_summon_tabx(cfg, args):
     if tabx_mod:
         summon_tabx.save()
     else:
-        log('[[%s]]没有修改。' % cfg["TABX"]["summon"])
+        log('[[%s.tabx]]没有修改。' % cfg["TABX"]["summon"])
 
 
 def generate_summon_row(summon_id):
@@ -146,10 +146,17 @@ def update_summon_page(cfg, args):
         wikitext_sync_file_path = os.path.join(WIKITEXT_SYNC_PATH, HuijiWiki.filename_fix(f'{page_title}.txt'))
         wikitext_sync_file_content, read_result = read_file(wikitext_sync_file_path)
 
-        # 文件不存在时才更新服务器
+        # 文件不存在时
         if not read_result:
-            gbf_wiki.edit(page_title, page_content)
+            # 先尝试从服务器拉取
+            gbf_wiki.raw(page_title)
             gbf_wiki.wait_threads()
+            result = gbf_wiki.get_result_rawtextlist()
+
+            if not result.get(page_title):
+                # 如果没有才更新服务器
+                gbf_wiki.edit(page_title, page_content)
+                gbf_wiki.wait_threads()
 
         # 不管文件是否存在，都会更新本地缓存，方便手工补充
         if wikitext_sync_file_content.strip() != page_content.strip():

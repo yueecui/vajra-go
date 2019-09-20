@@ -3,7 +3,7 @@ from danteng_downloader import Downloader
 from danteng_lib import log
 from ..util import get_skip_list
 import os
-from config import IMAGE_PATH, IMAGE_NEW_PATH, IMAGE_NPC_PATH
+from config import IMAGE_PATH, IMAGE_NEW_PATH, IMAGE_NPC_PATH, SKIP_LOG
 
 TABX_TITLE = 'Data:角色列表.tabx'
 TABX_KEY = 'ID'
@@ -56,6 +56,8 @@ def npc(cfg):
     downloader.set_try_count(retry_times)
 
     npc_base_url = cfg['base_url'] + 'assets/npc'
+
+    skip_log_f = open(SKIP_LOG, 'w')
 
     for npc_id, npc_info in tabx:
         if npc_id == 0:
@@ -144,7 +146,8 @@ def npc(cfg):
             log('开始下载角色 %s(%d) 的图片资源（共%d个）' % (npc_info["name_chs"], npc_id, len(work_list)))
             for work_info in work_list:
                 if save_to_new:
-                    downloader.download_multi_copies(work_info['url'], [work_info['path'], work_info['new']])
+                    downloader.download_multi_copies(work_info['url'], [work_info['path'], work_info['new']], log_handle=skip_log_f)
                 else:
-                    downloader.download_multi_copies(work_info['url'], [work_info['path']])
+                    downloader.download_multi_copies(work_info['url'], [work_info['path']], log_handle=skip_log_f)
         downloader.wait_threads()
+    skip_log_f.close()
