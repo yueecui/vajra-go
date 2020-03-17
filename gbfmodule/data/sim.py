@@ -7,8 +7,10 @@ import sqlite3
 import win32crypt
 import requests.cookies
 import json
-from danteng_lib import log, save_json, load_json
+from danteng_lib import log, save_json, load_json, read_file
 from config import *
+from chromecookie.chrome_cookie import ChromeCookieJar
+
 
 GAME_HOST = 'http://game.granbluefantasy.jp'
 
@@ -151,7 +153,7 @@ class GBFSim:
                 }
 
         # 从本地文件中检索
-        data_base_jp_path = os.path.join(DATA_PATH, 'weapon', 'jp')
+        data_base_jp_path = get_local_path('weapon', 'shop')
         if not os.path.exists(data_base_jp_path):
             return -1
         weapon_json_filename_list = os.listdir(data_base_jp_path)
@@ -189,7 +191,10 @@ class GBFSim:
     def _weapon_db_add_item(self, weapon_info):
         weapon_db = self._game_db['weapon']
 
-        record_info = weapon_db['record'][str(weapon_info['type'])][str(weapon_info['rarity'])]
+        try:
+            record_info = weapon_db['record'][str(weapon_info['type'])][str(weapon_info['rarity'])]
+        except:
+            z = 1
         record_info['count'] += 1
         weapon_db['total'] += 1
 
@@ -225,7 +230,7 @@ class GBFSim:
             }
 
         # 从本地文件中检索
-        data_base_jp_path = os.path.join(DATA_PATH, 'summon', 'jp')
+        data_base_jp_path = get_local_path('summon', 'shop')
         if not os.path.exists(data_base_jp_path):
             return -1
         summon_json_filename_list = os.listdir(data_base_jp_path)
@@ -437,7 +442,7 @@ class GBFSim:
         en_need_list = []
         shop_need_list = []
         # 从本地文件中检索
-        data_base_jp_path = os.path.join(DATA_PATH, 'weapon', 'jp')
+        data_base_jp_path = get_local_path('weapon', 'jp')
         if not os.path.exists(data_base_jp_path):
             return -1
         weapon_json_filename_list = os.listdir(data_base_jp_path)
@@ -448,15 +453,14 @@ class GBFSim:
 
             weapon_info = get_item_info_from_filename(filename)
             # 需要的商店数据
-            data_base_path = os.path.join(DATA_PATH, 'weapon')
             shop_filename = f'{weapon_info["id"]}.json'
-            shop_fullpath = os.path.join(data_base_path, 'shop', shop_filename)
+            shop_fullpath = get_local_path('weapon', 'shop', shop_filename)
             if not (os.path.exists(shop_fullpath) and os.path.getsize(shop_fullpath) > 0):
                 shop_need_list.append(weapon_info["id"])
 
             # 需要的英文版
             en_filename = f'{weapon_info["id"]}.json'
-            en_fullpath = os.path.join(data_base_path, 'en', en_filename)
+            en_fullpath = get_local_path('weapon', 'en', en_filename)
             if not (os.path.exists(en_fullpath) and os.path.getsize(en_fullpath) > 0):
                 en_need_list.append(weapon_info["id"])
 
@@ -466,11 +470,13 @@ class GBFSim:
         log('============================================')
 
         if len(shop_need_list) == 0:
-            log('没有缺失的英文版武器数据了')
+            log('没有缺失的商店武器数据了')
         else:
             self.set_language(1)
             for weapon_id in shop_need_list:
-                self._try_download_weapon_shop_info_by_id(weapon_id)
+                save_path = get_local_path('weapon', 'shop', f'{weapon_id}.json')
+                if not os.path.exists(save_path):
+                    self._try_download_weapon_shop_info_by_id(weapon_id, save_path)
 
         log('')
         log('============================================')
@@ -489,7 +495,7 @@ class GBFSim:
 
     def _try_download_weapon_info_by_id(self, weapon_id, lang='jp', reload=False):
         guess_filename = f'{weapon_id}.json'
-        local_path = os.path.join(DATA_PATH, 'weapon', lang, guess_filename)
+        local_path = get_local_path('weapon', lang, guess_filename)
         # 本地已经存在，返回0
         if not reload and os.path.exists(local_path):
             return 0
@@ -534,7 +540,7 @@ class GBFSim:
         log('============================================')
 
         # 从本地文件中检索（只检索日文版的数据）
-        data_base_jp_path = os.path.join(DATA_PATH, 'weapon', 'jp')
+        data_base_jp_path = get_local_path('weapon', 'jp')
         if not os.path.exists(data_base_jp_path):
             return -1
         weapon_json_filename_list = os.listdir(data_base_jp_path)
@@ -558,7 +564,9 @@ class GBFSim:
                 continue
             weapon_info = get_item_info_from_filename(filename)
 
-            self._try_download_weapon_shop_info_by_id(weapon_info['id'], reload=True)
+            weapon_id = weapon_info['id']
+            save_path = get_local_path('weapon', 'shop', f'{weapon_id}.json')
+            self._try_download_weapon_shop_info_by_id(weapon_id, save_path)
 
         # 更新英文版数据
         log('')
@@ -680,8 +688,7 @@ class GBFSim:
         uncap_need_list = []
         final_uncap_need_list = []
         # 从本地文件中检索
-        data_base_path = os.path.join(DATA_PATH, 'summon')
-        data_base_jp_path = os.path.join(data_base_path, 'jp')
+        data_base_jp_path = get_local_path('summon', 'jp')
         if not os.path.exists(data_base_jp_path):
             return -1
         summon_json_filename_list = os.listdir(data_base_jp_path)
@@ -693,18 +700,18 @@ class GBFSim:
             summon_info = get_item_info_from_filename(filename)
             summon_filename = f'{summon_info["id"]}.json'
             # 检查是否缺少英文数据
-            en_fullpath = os.path.join(data_base_path, 'en', summon_filename)
+            en_fullpath = get_local_path('summon', 'en', summon_filename)
             if not (os.path.exists(en_fullpath) and os.path.getsize(en_fullpath) > 0):
                 en_need_list.append(summon_info["id"])
             # 检查是否缺少满突数据
-            uncap_fullpath = os.path.join(data_base_path, 'uncap', summon_filename)
+            uncap_fullpath = get_local_path('summon', 'uncap', summon_filename)
             if not (os.path.exists(uncap_fullpath) and os.path.getsize(uncap_fullpath) > 0):
                 summon_json = load_json(os.path.join(data_base_jp_path, filename))
                 if not summon_json['is_arcarum']:
                     uncap_need_list.append(summon_info["id"])
             # 检查是否缺少终突数据
             if str(summon_info['id']) in final_uncap_list:
-                final_uncap_fullpath = os.path.join(data_base_path, 'final_uncap', summon_filename)
+                final_uncap_fullpath = get_local_path('summon', 'final_uncap', summon_filename)
                 if not (os.path.exists(final_uncap_fullpath) and os.path.getsize(final_uncap_fullpath) > 0):
                     final_uncap_need_list.append(summon_info["id"])
 
@@ -749,7 +756,7 @@ class GBFSim:
 
     def _try_download_summon_info_by_id(self, summon_id, lang='jp'):
         guess_filename = f'{summon_id}.json'
-        local_path = os.path.join(DATA_PATH, 'summon', lang, guess_filename)
+        local_path = get_local_path('summon', lang, guess_filename)
         # 本地已经存在，返回0
         if os.path.exists(local_path):
             return 0
@@ -788,9 +795,9 @@ class GBFSim:
     def _try_download_summon_uncap_info_by_id(self, summon_id, uncap_lv):
         summon_filename = f'{summon_id}.json'
         if uncap_lv == 2:
-            local_path = os.path.join(DATA_PATH, 'summon', 'uncap', summon_filename)
+            local_path = get_local_path('summon', 'uncap', summon_filename)
         elif uncap_lv == 3:
-            local_path = os.path.join(DATA_PATH, 'summon', 'final_uncap', summon_filename)
+            local_path = get_local_path('summon', 'final_uncap', summon_filename)
         else:
             raise Exception('错误的uncap level')
         # 本地已经存在，返回0
@@ -907,7 +914,13 @@ class GBFSim:
 
                         for guess_index in range(guess_index_length_min, guess_index_length_max):
                             has_query = True
-                            result_code = self._try_download_weapon_shop_info(type_id, rarity_id, guess_index)
+
+                            weapon_id = get_weapon_id(type_id, rarity_id, guess_index)
+                            save_path = get_local_path('weapon', 'shop', f'{weapon_id}.json')
+                            if os.path.exists(save_path):
+                                continue
+
+                            result_code = self._try_download_weapon_shop_info_by_id(weapon_id, save_path)
                             if result_code == 1:
                                 self._weapon_db_add_item_by_filename(get_weapon_id(type_id, rarity_id, guess_index))
                             if result_code in [0, 1]:
@@ -949,28 +962,20 @@ class GBFSim:
                 record_info = weapon_db['record'][type_id][rarity_id]
 
                 for miss_id in record_info['miss']:
-                    self._try_download_weapon_shop_info(type_id, rarity_id, miss_id)
+                    weapon_id = get_weapon_id(type_id, rarity_id, miss_id)
+                    save_path = get_local_path('weapon', 'shop', f'{weapon_id}.json')
+                    if not os.path.exists(save_path):
+                        self._try_download_weapon_shop_info_by_id(weapon_id, save_path)
 
-    def _try_download_weapon_shop_info(self, type_id, rarity_id, weapon_id):
-        return self._try_download_weapon_shop_info_by_id(get_weapon_id(type_id, rarity_id, weapon_id))
-
-    def _try_download_weapon_shop_info_by_id(self, weapon_id, reload=False):
-        guess_filename = f'{weapon_id}.json'
-        miss_local_path = os.path.join(DATA_PATH, 'shop_miss', guess_filename)
-        bak_local_path = os.path.join(DATA_PATH, 'weapon', 'shop', guess_filename)
-        # 本地已经存在，返回0
-        if not reload and os.path.exists(miss_local_path):
-            return 0
+    def _try_download_weapon_shop_info_by_id(self, weapon_id, save_path):
         # 本地不存在，向服务器请求
         weapon_result = self._request_shop_detail(weapon_id, 1)
         # 服务器存在并保存返回1
         if weapon_result['status_code'] == 200:
             if weapon_result['data']['data']['id']:
-                if not reload:
-                    save_json(weapon_result['data'], miss_local_path)
-                save_json(weapon_result['data'], bak_local_path)
+                save_json(weapon_result['data'], save_path)
                 log('【商店】武器[%s] %s 数据保存完毕' % (weapon_id, weapon_result['data']['data']['name']))
-                return 1
+                return weapon_result['data']
             else:
                 log('【商店】武器[%s] 数据不存在' % weapon_id)
                 return -1
@@ -1085,21 +1090,24 @@ class GBFSim:
             for miss_id in record_info['miss']:
                 self._try_download_summon_shop_info(rarity_id, miss_id)
 
-    def _try_download_summon_shop_info(self, rarity_id, summon_id):
+    def _try_download_summon_shop_info(self, rarity_id, summon_id, reload=False):
         return self._try_download_summon_shop_info_by_id(get_summon_id(rarity_id, summon_id))
 
-    def _try_download_summon_shop_info_by_id(self, summon_id):
+    def _try_download_summon_shop_info_by_id(self, summon_id, reload=False):
         guess_filename = f'{summon_id}.json'
-        local_path = os.path.join(DATA_PATH, 'shop_miss', guess_filename)
+        bak_local_path = get_local_path('summon', 'shop', guess_filename)
+        miss_local_path = os.path.join(DATA_PATH, 'shop_miss', guess_filename)
         # 本地已经存在，返回0
-        if os.path.exists(local_path):
+        if not reload and os.path.exists(bak_local_path):
             return 0
         # 本地不存在，向服务器请求
         weapon_result = self._request_shop_detail(summon_id, 2)
         # 服务器存在并保存返回1
         if weapon_result['status_code'] == 200:
             if weapon_result['data']['data']['id']:
-                save_json(weapon_result['data'], local_path)
+                if not reload:
+                    save_json(weapon_result['data'], miss_local_path)
+                save_json(weapon_result['data'], bak_local_path)
                 log('【商店】召唤石[%s] %s 数据保存完毕' % (summon_id, weapon_result['data']['data']['name']))
                 return 1
             else:
@@ -1129,7 +1137,8 @@ class GBFSim:
         for filename in check_new_id_list:
             item_info = get_item_info_from_filename(filename)
             if item_info['kind'] == 1:
-                self._try_download_weapon_info(item_info['type'], item_info['rarity'], item_info['index'])
+                pass
+                # self._try_download_weapon_info(item_info['type'], item_info['rarity'], item_info['index'])
             elif item_info['kind'] == 2:
                 self._try_download_summon_info(item_info['rarity'], item_info['index'])
 
@@ -1154,6 +1163,101 @@ class GBFSim:
                 if rarity_data['angel']:
                     yield get_weapon_id(type_id, rarity_id, 990)
 
+    # 下载武器数据（第二版）
+    # 只根据日文武器数据，下载英文shop数据
+    def download_weapon_data_v2(self):
+        shop_need_list = []
+        # 从本地文件中检索
+        data_base_jp_path = get_local_path('weapon', 'shop')
+        if not os.path.exists(data_base_jp_path):
+            return -1
+        weapon_json_filename_list = os.listdir(data_base_jp_path)
+        for filename in weapon_json_filename_list:
+            full_path = os.path.join(data_base_jp_path, filename)
+            if os.path.getsize(full_path) == 0:
+                continue
+
+            weapon_info = get_item_info_from_filename(filename)
+            # 需要的商店数据
+            shop_filename = f'{weapon_info["id"]}.json'
+            shop_fullpath = get_local_path('weapon', 'shop_en', shop_filename)
+            if not (os.path.exists(shop_fullpath) and os.path.getsize(shop_fullpath) > 0):
+                shop_need_list.append(weapon_info["id"])
+
+        log('')
+        log('============================================')
+        log('= 下载英文商店缺失数据')
+        log('============================================')
+
+        if len(shop_need_list) == 0:
+            log('没有缺失的英文商店武器数据了')
+        else:
+            # 切换下载英文数据
+            self.set_language(2)
+            for weapon_id in shop_need_list:
+                save_path = get_local_path('weapon', 'shop_en', f'{weapon_id}.json')
+                if not os.path.exists(save_path):
+                    self._try_download_weapon_shop_info_by_id(weapon_id, save_path)
+
+    # 下载召唤石数据（第二版）
+    # 从编成数据里抓取
+    def download_summon_data_v2(self):
+        # 获取下当前可最终凸石头的列表
+        final_uncap_list = self._get_summon_final_uncap_list()
+        skip_summon_id_list = get_skip_summon_id_list()
+
+        en_need_list = []
+        uncap_need_list = []
+        final_uncap_need_list = []
+        # 从本地文件中检索
+        data_base_jp_path = get_local_path('summon', 'shop')
+        if not os.path.exists(data_base_jp_path):
+            return -1
+        summon_json_filename_list = os.listdir(data_base_jp_path)
+        for filename in summon_json_filename_list:
+            full_path = os.path.join(data_base_jp_path, filename)
+            if os.path.getsize(full_path) == 0:
+                continue
+
+            summon_info = get_item_info_from_filename(filename)
+            if summon_info['id'] in skip_summon_id_list:
+                continue
+
+            summon_filename = f'{summon_info["id"]}.json'
+            # 检查是否缺少满突数据
+            uncap_fullpath = get_local_path('summon', 'uncap', summon_filename)
+            if not (os.path.exists(uncap_fullpath) and os.path.getsize(uncap_fullpath) > 0):
+                uncap_need_list.append(summon_info["id"])
+            # 检查是否缺少终突数据
+            if str(summon_info['id']) in final_uncap_list:
+                final_uncap_fullpath = get_local_path('summon', 'final_uncap', summon_filename)
+                if not (os.path.exists(final_uncap_fullpath) and os.path.getsize(final_uncap_fullpath) > 0):
+                    final_uncap_need_list.append(summon_info["id"])
+
+        log('')
+        log('============================================')
+        log('= 下载满突缺失数据')
+        log('============================================')
+
+        if len(uncap_need_list) == 0:
+            log('没有缺失的满突召唤石数据了')
+        else:
+            self.set_language(1)
+            for summon_id in uncap_need_list:
+                self._try_download_summon_uncap_info_by_id(summon_id, 2)
+
+        log('')
+        log('============================================')
+        log('= 下载终突缺失数据')
+        log('============================================')
+
+        if len(final_uncap_need_list) == 0:
+            log('没有缺失的满突召唤石数据了')
+        else:
+            self.set_language(1)
+            for summon_id in final_uncap_need_list:
+                self._try_download_summon_uncap_info_by_id(summon_id, 3)
+
     # 获取所有新闻
     def download_all_news(self):
         # TODO
@@ -1162,14 +1266,25 @@ class GBFSim:
 
 def get_chrome_cookies(url, profile):
     cookie_file_path = os.path.join(os.environ['LOCALAPPDATA'], r'Google\Chrome\User Data\{}\Cookies'.format(profile))
-    # print(cookie_file_path)
-    conn = sqlite3.connect(cookie_file_path)
+    jar = ChromeCookieJar(filename=cookie_file_path, url=url)
+    jar.load()
+
     ret_dict = {}
-    rows = list(conn.execute("select name, encrypted_value from cookies where host_key = '{}'".format(url)))
-    conn.close()
-    for row in rows:
-        ret = win32crypt.CryptUnprotectData(row[1], None, None, None, 0)
-        ret_dict[row[0]] = ret[1].decode()
+    for cookie in jar:
+        ret_dict[cookie.name] = cookie.value
+        # print(vars(cookie))
+
+    # 老版本
+    # cookie_file_path = os.path.join(os.environ['LOCALAPPDATA'], r'Google\Chrome\User Data\{}\Cookies'.format(profile))
+    # # print(cookie_file_path)
+    # conn = sqlite3.connect(cookie_file_path)
+    # ret_dict = {}
+    # rows = list(conn.execute("select name, encrypted_value from cookies where host_key = '{}'".format(url)))
+    # conn.close()
+    # for row in rows:
+    #     ret = win32crypt.CryptUnprotectData(row[1], None, None, None, 0)
+    #     ret_dict[row[0]] = ret[1].decode()
+
     return ret_dict
 
 
@@ -1253,3 +1368,34 @@ def get_item_info_from_filename(filename):
             'kind': 2,
         }
     return None
+
+
+# 获取本地路径位置
+def get_local_path(data_type, lang, filename=None):
+    if data_type == '':
+        pass
+    else:
+        if filename is None:
+            return os.path.join(DATA_PATH, data_type, lang)
+        else:
+            return os.path.join(DATA_PATH, data_type, lang, filename)
+
+
+def get_skip_summon_id_list():
+    content, result = read_file(SKIP_SUMMON_ID_LIST_PATH)
+    if not result:
+        return []
+    else:
+        raw_list = content.split('\n')
+        skip_id_list = []
+        for skip_id_text in raw_list:
+            skip_id_text = skip_id_text.strip()
+            if skip_id_text == '':
+                continue
+            if skip_id_text[0:1] == '#':
+                continue
+            try:
+                skip_id_list.append(int(skip_id_text))
+            except ValueError:
+                continue
+        return skip_id_list

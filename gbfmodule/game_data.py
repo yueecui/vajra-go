@@ -5,13 +5,20 @@ from .data.sim import GBFSim
 def download_game_data(cfg, args):
     gbf_sim = GBFSim(cfg)
 
-    # 先检查check_new_id目录里是否有json文件，如果有按照名字下载数据
-    gbf_sim.download_data_by_new_id()
+    # # 先检查check_new_id目录里是否有json文件，如果有按照名字下载数据
+    # gbf_sim.download_data_by_new_id()
+    #
+    # # 获取武器数据
+    # gbf_sim.download_weapon_data()
+    # # 获取召唤数据
+    # gbf_sim.download_summon_data()
 
-    # 获取武器数据
-    gbf_sim.download_weapon_data()
-    # 获取召唤数据
-    gbf_sim.download_summon_data()
+    # 新流程
+    # 武器（补齐英文商店数据）
+    gbf_sim.download_weapon_data_v2()
+
+    # 召唤石（补齐编成数据）
+    gbf_sim.download_summon_data_v2()
 
 
 # 尝试查找新的游戏数据

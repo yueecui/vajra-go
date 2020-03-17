@@ -35,29 +35,28 @@ def update_summon_tabx(cfg, args):
 
 def generate_summon_row(summon_id):
     # 召唤石图鉴数据
-    note_data_jp = load_json(os.path.join(DATA_PATH, 'summon', 'jp', f'{summon_id}.json'))
-    note_data_en = load_json(os.path.join(DATA_PATH, 'summon', 'en', f'{summon_id}.json'))
+    note_data_jp = load_json(os.path.join(DATA_PATH, 'summon', 'uncap', f'{summon_id}.json'))
 
     temp_row = {
-        'name_jp': note_data_jp['name'],
-        'series_name': note_data_jp['series_name'],
-        'name_en': note_data_en['name'],
+        'name_jp': note_data_jp['master']['name'],
+        'series_name': note_data_jp['master'].get('series_name') if note_data_jp['master'].get('series_name') else '',
+        'name_en': note_data_jp['master']['name_en'],
         'name_chs': '',
         'tag_title': '',
         'nickname': [],
         'search_nickname': [],
-        'element': int(note_data_jp['attribute']),
-        'rarity': int(note_data_jp['rarity']),
+        'element': int(note_data_jp['master']['attribute']),
+        'rarity': int(note_data_jp['master']['rarity']),
         'category': '',
         'tag': [],
         'is_free': False,
         'mypage': False,
-        'skill_name_jp': '',
-        'skill_prefix_jp': '',
-        'skill_suffix_jp': '',
-        'skill_name_en': '',
-        'skill_prefix_en': '',
-        'skill_suffix_en': '',
+        'skill_name_jp': note_data_jp['special_skill']['name'],
+        'skill_prefix_jp': note_data_jp['special_skill']['coalescence_name1'],
+        'skill_suffix_jp': note_data_jp['special_skill']['coalescence_name2'],
+        'skill_name_en': note_data_jp['special_skill']['name_en'].strip(),
+        'skill_prefix_en': note_data_jp['special_skill']['coalescence_name1_en'].strip(),
+        'skill_suffix_en': note_data_jp['special_skill']['coalescence_name2_en'].strip(),
         'skill_name_cn': '',
         'skill_prefix_cn': '',
         'skill_suffix_cn': '',
@@ -66,39 +65,24 @@ def generate_summon_row(summon_id):
         'link_jpwiki': '',
         'link_kamigame': '',
         'uncap_img': [],
-        'summon_id': 0,
-        'tribe_id': 0,
+        'summon_id': int(note_data_jp['master']['summon_id']),
+        'tribe_id': int(note_data_jp['master']['tribe']),
         'release_date': time.strftime("##%Y-%m-%d", time.localtime()),
         'star4_date': '',
         'star5_date': '',
-        'max_hp': 0,
-        'max_atk': 0,
+        'max_hp': int(note_data_jp['param']['hp']),
+        'max_atk': int(note_data_jp['param']['attack']),
         'evo4_hp': 0,
         'evo4_atk': 0,
         'evo5_hp': 0,
         'evo5_atk': 0,
         'base_evo': 3,
         'max_evo': 3,
-        'cv': note_data_jp['voice_acter'].split(' '),
+        'cv': note_data_jp['master']['voice_acter'].split(' '),
         'has_sub_skill': 'sub_skill' in note_data_jp,
         'not_in_note': False,
         'no_combo_first': False,
     }
-
-    uncap_data_jp = load_json(os.path.join(DATA_PATH, 'summon', 'uncap', f'{summon_id}.json'))
-    if uncap_data_jp:
-        temp_row.update({
-            'skill_name_jp': uncap_data_jp['special_skill']['name'],
-            'skill_prefix_jp': uncap_data_jp['special_skill']['coalescence_name1'],
-            'skill_suffix_jp': uncap_data_jp['special_skill']['coalescence_name2'],
-            'skill_name_en': uncap_data_jp['special_skill']['name_en'].strip(),
-            'skill_prefix_en': uncap_data_jp['special_skill']['coalescence_name1_en'].strip(),
-            'skill_suffix_en': uncap_data_jp['special_skill']['coalescence_name2_en'].strip(),
-            'summon_id': int(uncap_data_jp['master']['summon_id']),
-            'tribe_id': int(uncap_data_jp['master']['tribe']),
-            'max_hp': int(uncap_data_jp['param']['hp']),
-            'max_atk': int(uncap_data_jp['param']['attack']),
-        })
 
     final_uncap_data_jp = load_json(os.path.join(DATA_PATH, 'summon', 'final_uncap', f'{summon_id}.json'))
     if final_uncap_data_jp:
@@ -168,18 +152,18 @@ def new_summon_page(summon_id):
     page_content_rows = list()
 
     # 召唤石图鉴数据
-    note_data_jp = load_json(os.path.join(DATA_PATH, 'summon', 'jp', f'{summon_id}.json'))
-    note_data_en = load_json(os.path.join(DATA_PATH, 'summon', 'en', f'{summon_id}.json'))
+    note_data_jp = load_json(os.path.join(DATA_PATH, 'summon', 'shop', f'{summon_id}.json'))['data']
+    # note_data_en = load_json(os.path.join(DATA_PATH, 'summon', 'en', f'{summon_id}.json'))
     uncap_data_jp = load_json(os.path.join(DATA_PATH, 'summon', 'uncap', f'{summon_id}.json'))
     final_uncap_data_jp = load_json(os.path.join(DATA_PATH, 'summon', 'final_uncap', f'{summon_id}.json'))
-    if not note_data_jp:
-        raise Exception(f'召唤石{summon_id}的日文数据文件未找到')
-    if not note_data_en:
-        raise Exception(f'召唤石{summon_id}的英文数据文件未找到')
+    # if not note_data_jp:
+    #     raise Exception(f'召唤石{summon_id}的日文数据文件未找到')
+    # if not note_data_en:
+    #     raise Exception(f'召唤石{summon_id}的英文数据文件未找到')
 
     page_content_rows.append('{{召唤石信息')
-    page_content_rows.append('|背景日文=' + note_data_jp['comment'])
-    page_content_rows.append('|背景英文=' + note_data_en['comment'])
+    page_content_rows.append('|背景日文=' + uncap_data_jp['master']['comment'])
+    page_content_rows.append('|背景英文=' + uncap_data_jp['master']['comment_en'])
     page_content_rows.append('|背景中文=')
     page_content_rows.append('}}')
     page_content_rows.append('')
@@ -194,25 +178,25 @@ def new_summon_page(summon_id):
     if final_uncap_data_jp:
         special_skill_text.append('<br>{{Evo|4}} ' + final_uncap_data_jp["special_skill"]["comment"])
 
-    cd_text = []
-    if 'start_recast' in note_data_jp["special_skill"] and note_data_jp["special_skill"]['start_recast'] != '':
-        cd_text.append('{{CD|初次}} ' + note_data_jp["special_skill"]['start_recast'] + '回合')
-    if 'recast' in note_data_jp["special_skill"] and note_data_jp["special_skill"]['recast'] != '':
-        cd_text.append(note_data_jp["special_skill"]['recast'] + '回合')
+    # cd_text = []
+    # if 'start_recast' in note_data_jp["special_skill"] and note_data_jp["special_skill"]['start_recast'] != '':
+    #     cd_text.append('{{CD|初次}} ' + note_data_jp["special_skill"]['start_recast'] + '回合')
+    # if 'recast' in note_data_jp["special_skill"] and note_data_jp["special_skill"]['recast'] != '':
+    #     cd_text.append(note_data_jp["special_skill"]['recast'] + '回合')
 
     page_content_rows.append(f'=={{{{召唤石标题|召唤|{note_data_jp["special_skill"]["name"]}}}}}==')
     page_content_rows.append('')
     page_content_rows.append('{{召唤主动')
     page_content_rows.append('|name=' + note_data_jp["special_skill"]["name"])
     page_content_rows.append('|name_chs=')
-    page_content_rows.append('|cd=' + '<br>'.join(cd_text))
+    page_content_rows.append('|cd=？回合')
     page_content_rows.append('|desc=' + ''.join(special_skill_text))
     page_content_rows.append('|tag=')
     page_content_rows.append('}}')
     page_content_rows.append('')
 
     # 主加护文本
-    main_aura_text = ['{{Evo|0}} ' + note_data_jp["skill"]["comment"]]
+    main_aura_text = ['{{Evo|0}} ' + note_data_jp["skill1"]["comment"]]
     if uncap_data_jp:
         main_aura_text.append('<br>{{Evo|3}} ' + uncap_data_jp["skill"]["comment"])
     if final_uncap_data_jp:
@@ -228,14 +212,14 @@ def new_summon_page(summon_id):
         if final_uncap_data_jp:
             sub_aura_text.append('<br>{{Evo|4}} ' + final_uncap_data_jp["sub_skill"]["comment"])
 
-    page_content_rows.append(f'=={{{{召唤石标题|加护|{note_data_jp["skill"]["name"]}}}}}==')
+    page_content_rows.append(f'=={{{{召唤石标题|加护|{note_data_jp["skill1"]["name"]}}}}}==')
     page_content_rows.append('')
 
     if has_sub:
         page_content_rows.append('===主召时===')
 
     page_content_rows.append('{{召唤加护')
-    page_content_rows.append('|name=' + note_data_jp["skill"]["name"])
+    page_content_rows.append('|name=' + note_data_jp["skill1"]["name"])
     page_content_rows.append('|name_chs=')
     page_content_rows.append('|desc=' + ''.join(main_aura_text))
     page_content_rows.append('|tag=')
@@ -246,7 +230,7 @@ def new_summon_page(summon_id):
         page_content_rows.append('===副召时===')
 
         page_content_rows.append('{{召唤加护')
-        page_content_rows.append('|name=' + note_data_jp["skill"]["name"])
+        page_content_rows.append('|name=' + note_data_jp["sub_skill"]["name"])
         page_content_rows.append('|name_chs=')
         page_content_rows.append('|desc=' + ''.join(sub_aura_text))
         page_content_rows.append('|tag=')

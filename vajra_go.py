@@ -9,7 +9,7 @@ def main():
 
     # 创建命令行参数解析器
     parser = argparse.ArgumentParser(description='GBF WIKI Bot(https://gbf.huijiwiki.com)',
-                                     epilog='Last Update: 2019-3-1')
+                                     epilog='Last Update: 2020-3-9')
     subparsers = parser.add_subparsers(title='sub modules')
 
     # 下载图片信息
