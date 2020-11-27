@@ -156,10 +156,10 @@ def new_summon_page(summon_id):
     # note_data_en = load_json(os.path.join(DATA_PATH, 'summon', 'en', f'{summon_id}.json'))
     uncap_data_jp = load_json(os.path.join(DATA_PATH, 'summon', 'uncap', f'{summon_id}.json'))
     final_uncap_data_jp = load_json(os.path.join(DATA_PATH, 'summon', 'final_uncap', f'{summon_id}.json'))
-    # if not note_data_jp:
-    #     raise Exception(f'召唤石{summon_id}的日文数据文件未找到')
-    # if not note_data_en:
-    #     raise Exception(f'召唤石{summon_id}的英文数据文件未找到')
+    if not note_data_jp:
+        raise Exception(f'召唤石{summon_id}的商店数据文件未找到')
+    if not uncap_data_jp:
+        raise Exception(f'召唤石{summon_id}的助战数据文件未找到')
 
     page_content_rows.append('{{召唤石信息')
     page_content_rows.append('|背景日文=' + uncap_data_jp['master']['comment'])
