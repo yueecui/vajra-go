@@ -3,8 +3,6 @@ import re
 import time
 import os
 import random
-import sqlite3
-import win32crypt
 import requests.cookies
 import json
 from danteng_lib import log, save_json, load_json, read_file

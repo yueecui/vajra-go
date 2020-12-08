@@ -8,4 +8,5 @@ backup
 /Cache
 /Temp
 *.ipyb
-pack.bat
+pac.bat
+venv
