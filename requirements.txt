@@ -2,7 +2,7 @@ altgraph==0.17
 certifi==2020.12.5
 cffi==1.14.4
 chardet==3.0.4
-cryptography==3.2.1
+cryptography==2.8
 future==0.18.2
 idna==2.10
 mwparserfromhell==0.5.4
