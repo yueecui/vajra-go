@@ -90,7 +90,7 @@ def get_shabi_content(shabi):
     gacha_text_array = []
     for sub_gacha_id, sub_gacha_info in shabi['gacha'].items():
         sub_gacha_text_array = [
-            '{{必得信息',
+            '{{记录项目',
             f'|id={sub_gacha_info["id"]}',
             f'|name={sub_gacha_info["name"]}',
             f'|banner={sub_gacha_info["payment_image"]}',
