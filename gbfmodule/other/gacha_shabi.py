@@ -105,16 +105,16 @@ def get_shabi_content(shabi):
                 raise Exception(f'预料外的抽奖类型：{category_info["category"]}')
             sub_gacha_text_array.append(f'|{category_name}={",".join([str(item["reward_id"]) for item in category_info["item"]])}')
         sub_gacha_text_array.append('}}')
-        gacha_text_array.append(''.join(sub_gacha_text_array))
+        gacha_text_array.append('|' + ''.join(sub_gacha_text_array))
 
     content_array = [
         '{{必得记录',
         f'|id={shabi["id"]}',
         f'|name={shabi["name"]}',
-        f'|start={shabi["start"]}',
-        f'|end={shabi["end"]}',
+        f'|start={shabi["start"].replace("/", "-")}',
+        f'|end={shabi["end"].replace("/", "-")}',
         f'|image_path={shabi["image_path"]}',
-        '|gacha={{列表',
+        '|gacha={{记录列表',
         '\n'.join(gacha_text_array),
         '}}',
         '}}'

@@ -1,4 +1,5 @@
 from danteng_downloader import Downloader
+from huijiWikiTabx import HuijiWikiTabx
 from danteng_lib import log, load_json
 from ..util import get_skip_list
 import os
@@ -18,13 +19,29 @@ def item(cfg):
             except:
                 pass
 
+    # 先检查本地
+    data_base_path = os.path.join(IMAGE_PATH, 'item')
+    image_base_url = r'http://game-a.granbluefantasy.jp/assets/img/sp/assets/item/'
+
     # 配置下载器
     downloader = Downloader()
     downloader.set_try_count(retry_times)
 
-    # 先检查本地
-    data_base_path = os.path.join(IMAGE_PATH, 'item')
-    image_base_url = r'http://game-a.granbluefantasy.jp/assets/img/sp/assets/item/'
+    # 下载普通素材道具图标
+    # 其他道具图标需要手工下载
+    tabx_page_title = f'Data:{cfg["TABX"]["item"]}.tabx'
+    item_tabx = HuijiWikiTabx(cfg['wiki'], tabx_page_title, 'ID')
+    article_path = os.path.join(data_base_path, 'article_s')
+    for item_index, item_info in item_tabx:
+        if item_info['ID'] == 0:
+            continue
+        file_name = f'{item_info["ID"]}.jpg'
+        file_path = os.path.join(article_path, file_name)
+        if os.path.exists(file_path):
+            continue
+        download_url = f'{image_base_url}/article/s/{file_name}'
+        downloader.download_multi_copies(download_url, [file_path])
+    downloader.wait_threads()
 
     all_list = os.listdir(data_base_path)
 
