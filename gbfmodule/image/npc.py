@@ -93,23 +93,26 @@ def npc(cfg):
 
                     # 检测是否为允许的项目
                     res_info = res_tabx.get_row(npc_info['ID'])
-                    multi_count = res_info['img_count']
-                    if config['filename_prefix'] in res_info:
-                        res_value = res_info[config['filename_prefix']]
-                        if type(res_value) == bool:
-                            if not res_value:
-                                allow = False
-                        elif type(res_value) == int:
-                            multi_count = res_value
+                    if res_info:
+                        multi_count = res_info['img_count']
+                        if config['filename_prefix'] in res_info:
+                            res_value = res_info[config['filename_prefix']]
+                            if type(res_value) == bool:
+                                if not res_value:
+                                    allow = False
+                            elif type(res_value) == int:
+                                multi_count = res_value
 
-                    if allow:
-                        for m_index in range(1, multi_count+1):
-                            img_name_list.append('%s_10%d' % (img_base_name, m_index))
+                        if allow:
+                            for m_index in range(1, multi_count+1):
+                                img_name_list.append('%s_10%d' % (img_base_name, m_index))
 
-                        # 如果移除普通
-                        flag_disable_normal_name = config['multi_disable_normal'] if 'multi_disable_normal' in config else False
-                        if flag_disable_normal_name:
-                            img_name_list.remove(img_base_name)
+                            # 如果移除普通
+                            flag_disable_normal_name = config['multi_disable_normal'] if 'multi_disable_normal' in config else False
+                            if flag_disable_normal_name:
+                                img_name_list.remove(img_base_name)
+                    else:
+                        z = 1
                 if config['skin'] and download_skin:
                     new_img_name_list = []
                     for img_name in img_name_list:
