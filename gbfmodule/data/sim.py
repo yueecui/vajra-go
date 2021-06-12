@@ -8,6 +8,7 @@ import json
 from danteng_lib import log, save_json, load_json, read_file
 from config import *
 from chromecookie.chrome_cookie import ChromeCookieJar
+from chromecookie.gbf_chrome_cookies import get_game_cookies_v2
 
 
 GAME_HOST = 'http://game.granbluefantasy.jp'
@@ -16,7 +17,7 @@ GAME_HOST = 'http://game.granbluefantasy.jp'
 class GBFSim:
     def __init__(self, cfg, check_ver=True):
         self._cfg = cfg
-        self._cookies = get_game_cookies(cfg)
+        self._cookies = get_game_cookies_v2(self._cfg['SIM']['cookies_user'])
         self._version = None
         self._game_db = {}
         self._is_login = False

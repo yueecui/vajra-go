@@ -7,6 +7,7 @@ import requests.cookies
 import json
 from danteng_lib import log
 from chromecookie.chrome_cookie import ChromeCookieJar
+from chromecookie.gbf_chrome_cookies import get_game_cookies_v2
 
 
 GAME_HOST = 'http://game.granbluefantasy.jp'
@@ -22,7 +23,8 @@ def get_double_timestamp():
 class GBFSim:
     def __init__(self, cfg, check_ver=True):
         self._cfg = cfg
-        self._cookies = self.__get_game_cookies()
+        # self._cookies = self.__get_game_cookies()
+        self._cookies = get_game_cookies_v2(self._cfg['SIM']['cookies_user'])
         self._version = None
         self._lang = 0
         self._is_login = False
