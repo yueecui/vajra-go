@@ -31,7 +31,7 @@ def update_item_tabx(cfg, args):
         row_info = item_tabx.get_row(item_id)
         if row_info:
             row_info['name_en'] = item_info['name']
-            row_info['comment_en'] = item_info['comment'].replace('\n', '<br>').strip()
+            # row_info['comment_en'] = item_info['comment'].replace('\n', '<br>').strip()
         item_tabx.mod_row(item_id, row_info)
 
     # 从本地图标文件添加空的数据
@@ -67,10 +67,10 @@ def generate_item_row(item_info, row_info=None):
         'element': row_info['element'] if 'element' in row_info else 0,
         'seq_id': int(item_info['seq_id']),
         'category_type': item_info['category_type'],
-        'link_enwiki': row_info['link_enwiki'] if 'link_enwiki' in row_info else '',
-        'comment_jp': item_info['comment'].replace('\n', '<br>').strip(),
-        'comment_en': row_info['comment_en'] if 'comment_en' in row_info else '',
-        'comment_chs': row_info['comment_chs'] if 'comment_chs' in row_info else '',
+        # 'link_enwiki': row_info['link_enwiki'] if 'link_enwiki' in row_info else '',
+        # 'comment_jp': item_info['comment'].replace('\n', '<br>').strip(),
+        # 'comment_en': row_info['comment_en'] if 'comment_en' in row_info else '',
+        # 'comment_chs': row_info['comment_chs'] if 'comment_chs' in row_info else '',
     }
     return temp_row
 
@@ -111,7 +111,7 @@ def update_item_auto_db(cfg, args):
         for nickname in item_info['search_nickname']:
             item_replace_map[nickname] = item_id
 
-    output = []
+    output = list()
 
     output.append('----------------------------------------------')
     output.append('-- 本文件由机器人自动维护，请勿手工修改')
