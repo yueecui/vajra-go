@@ -64,7 +64,7 @@ def get_gacha_data(gbf_sim):
 
 
 def get_gacha_info(gbf_sim, gacha_id, page_num):
-    gacha_info = gbf_sim.get(f'http://game.granbluefantasy.jp/gacha/provision_ratio/{gacha_id}/{page_num}')
+    gacha_info = gbf_sim.get(f'http://game.granbluefantasy.jp/gacha/provision_ratio/legend/{gacha_id}/{page_num}')
     if gacha_info['status_code'] == 500:
         return None
     assert len(gacha_info['data']['ratio']) == 1
