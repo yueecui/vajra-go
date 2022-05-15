@@ -1,2 +1,2 @@
-@venv\Scripts\pyinstaller -c --onefile --version-file "VERSION_INFO" --workpath "D:\Wiki\workpath" --distpath "D:\Wiki\output" --path "D:\GitHub\yuee-lib" --icon="res\vajra.ico" -y "vajra_go.py"
+@venv\Scripts\pyinstaller -c --onefile --version-file "VERSION_INFO" --workpath "build" --distpath "dist" --icon="res\vajra.ico" -y "vajra_go.py"
 @pause
