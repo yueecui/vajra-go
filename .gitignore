@@ -10,3 +10,5 @@ backup
 *.ipyb
 pac.bat
 venv
+/dist
+/build

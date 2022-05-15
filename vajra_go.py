@@ -1,15 +1,25 @@
+import os
 import argparse
-from config_loader import config_loader
-from gbfmodule import *
+from module_huiji.config_loader import config_loader
+from module_gbf import *
+from config import WIKITEXT_PATH, WIKITEXT_SYNC_PATH
+
+
+def init():
+    # 初始化创建目录
+    os.makedirs(WIKITEXT_PATH, exist_ok=True)
+    os.makedirs(WIKITEXT_SYNC_PATH, exist_ok=True)
 
 
 def main():
+    init()
+
     # 读取配置文件
     cfg = config_loader('config.ini')
 
     # 创建命令行参数解析器
     parser = argparse.ArgumentParser(description='GBF WIKI Bot(https://gbf.huijiwiki.com)',
-                                     epilog='Last Update: 2020-3-9')
+                                     epilog='Last Update: 2022-5-15')
     subparsers = parser.add_subparsers(title='sub modules')
 
     # 下载图片信息
