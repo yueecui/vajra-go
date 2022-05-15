@@ -3,10 +3,12 @@ __pycache__
 *.spec
 backup
 /env
-/config.ini
+/config.ini.example
 /resources
 /Cache
 /Temp
 *.ipyb
 pac.bat
 venv
+/dist
+/build
