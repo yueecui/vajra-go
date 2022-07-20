@@ -23,6 +23,7 @@ def update_weapon_tabx(cfg, args):
         weapon_id = int(weapon_id)
         if weapon_id in skip_weapon_id_list:
             continue
+
         if not weapon_tabx.has_key(weapon_id):
             weapon_tabx.mod_row(weapon_id, generate_weapon_row(weapon_id))
             tabx_mod = True
@@ -72,7 +73,12 @@ def generate_weapon_row(weapon_id):
         'max_evo': 3,
         'is_archaic': False,
         'sk_icon': [],
+        'sk_names': [],
     }
+
+    for key in ['skill1', 'skill2', 'skill3']:
+        if key in note_data_jp and 'name' in note_data_jp[key]:
+            temp_row['sk_names'].append(note_data_jp[key]['name'].strip())
 
     # for skill_key in ['skill1', 'skill2', 'skill3']:
     #     if skill_key in note_data_jp and not (note_data_jp[skill_key] is None):
@@ -246,7 +252,8 @@ def update_weapon_auto_db(cfg, args):
     for item_id, item_info in item_tabx.get_all_data().items():
         if item_id == 0:
             continue
-        item_db_auto[item_id] = item_info['tag_title'] if item_info['tag_title'] else (item_info['name_chs'] if item_info['name_chs'] else item_info['name_jp'])
+        item_db_auto[item_id] = item_info['tag_title'] if item_info['tag_title'] else (
+            item_info['name_chs'] if item_info['name_chs'] else item_info['name_jp'])
 
     output = []
 
