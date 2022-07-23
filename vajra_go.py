@@ -54,7 +54,7 @@ def main():
     extract_parser.add_argument('command',  nargs='?', default='all', type=str)
     extract_parser.set_defaults(callback=gbf_wiki_page_updater)
 
-    # 更新WIKI页面
+    # 更新必得数据
     extract_parser = subparsers.add_parser('gacha', help='gacha data update to wiki')
     extract_parser.set_defaults(callback=update_shabi)
 

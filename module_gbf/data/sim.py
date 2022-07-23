@@ -8,6 +8,7 @@ import json
 from module_huiji.danteng_lib import log, save_json, load_json, read_file
 from config import *
 from module_gbf.data.gbf_chrome_cookies import get_game_cookies_v2
+from config import SKIP_WEAPON_NOTE_ID_LIST_PATH, DATA_PATH
 
 GAME_HOST = 'http://game.granbluefantasy.jp'
 
@@ -978,6 +979,23 @@ class GBFSim:
             log('【商店】武器[%s] 数据不存在' % weapon_id)
             return -1
 
+    def _try_download_weapon_note_info_by_id(self, weapon_id, save_path):
+        # 本地不存在，向服务器请求
+        weapon_result = self._request_weapon_note(weapon_id)
+        # 服务器存在并保存返回1
+        if weapon_result['status_code'] == 200:
+            if weapon_result['data']:
+                save_json(weapon_result, save_path)
+                log('【图鉴】武器[%s] %s 数据保存完毕' % (weapon_id, weapon_result['data']['name']))
+                return weapon_result['data']
+            else:
+                log('【图鉴】武器[%s] 数据不存在' % weapon_id)
+                return -1
+        # 服务器不存在，返回-1
+        elif weapon_result['status_code'] == 500:
+            log('【图鉴】武器[%s] 数据不存在' % weapon_id)
+            return -1
+
     def _request_shop_detail(self, item_id, item_kind):
         timestamp_a, timestamp_b = get_double_timestamp()
         request_url = f'http://game.granbluefantasy.jp/result/detail?_={timestamp_a}&t={timestamp_b}&uid={self._user_id}'
@@ -988,6 +1006,22 @@ class GBFSim:
         }
         data_text = json.dumps(data, separators=(',', ':'))
         return self._post(request_url, data_text=data_text)
+
+    def _request_weapon_note(self, weapon_id):
+        timestamp_a, timestamp_b = get_double_timestamp()
+        request_url = f'http://game.granbluefantasy.jp/archive/weapon_detail?_={timestamp_a}&t={timestamp_b}&uid={self._user_id}'
+        data = {
+            "attribute": "0",
+            "event_id": None,
+            "kind_name": str(int(str(weapon_id)[4])+1),
+            "special_token": None,
+            "story_id": None,
+            "user_id": str(self._user_id),
+            "weapon_id": str(weapon_id),
+        }
+        data_text = json.dumps(data, separators=(',', ':'))
+        return self._post(request_url, data_text=data_text)
+
 
     # 检查新增召唤石
     def check_new_summon_data(self):
@@ -1192,6 +1226,65 @@ class GBFSim:
                 save_path = get_local_path('weapon', 'shop_en', f'{weapon_id}.json')
                 if not os.path.exists(save_path):
                     self._try_download_weapon_shop_info_by_id(weapon_id, save_path)
+
+    # 下载武器图鉴数据
+    # 2022年7月23日
+    def get_skip_weapon_note_id_list(self):
+        content, result = read_file(SKIP_WEAPON_NOTE_ID_LIST_PATH)
+        if not result:
+            return []
+        else:
+            raw_list = content.split('\n')
+            skip_id_list = []
+            for skip_id_text in raw_list:
+                skip_id_text = skip_id_text.strip()
+                if skip_id_text == '':
+                    continue
+                if skip_id_text[0:1] == '#':
+                    continue
+                try:
+                    skip_id_list.append(f'{skip_id_text}.json')
+                except ValueError:
+                    continue
+            return skip_id_list
+
+    # 根据商店数据，补充下载图鉴数据
+    def download_weapon_data_v2_note(self):
+        shop_need_list = []
+        # 从本地文件中检索
+        data_base_jp_path = get_local_path('weapon', 'shop')
+        if not os.path.exists(data_base_jp_path):
+            return -1
+        skip_id_list = self.get_skip_weapon_note_id_list()
+        weapon_json_filename_list = os.listdir(data_base_jp_path)
+        for filename in weapon_json_filename_list:
+            if filename in skip_id_list:
+                continue
+            full_path = os.path.join(data_base_jp_path, filename)
+            if os.path.getsize(full_path) == 0:
+                continue
+
+            weapon_info = get_item_info_from_filename(filename)
+            # 需要的商店数据
+            shop_filename = f'{weapon_info["id"]}.json'
+            shop_fullpath = get_local_path('weapon', 'note', shop_filename)
+            if not (os.path.exists(shop_fullpath) and os.path.getsize(shop_fullpath) > 0):
+                shop_need_list.append(weapon_info["id"])
+
+        log('')
+        log('============================================')
+        log('= 下载日文图鉴缺失数据')
+        log('============================================')
+
+        if len(shop_need_list) == 0:
+            log('没有缺失的日文图鉴数据了')
+        else:
+            # 切换下载英文数据
+            self.set_language(1)
+            for weapon_id in shop_need_list:
+                save_path = get_local_path('weapon', 'note', f'{weapon_id}.json')
+                if not os.path.exists(save_path):
+                    self._try_download_weapon_note_info_by_id(weapon_id, save_path)
 
     # 下载召唤石数据（第二版）
     # 从编成数据里抓取

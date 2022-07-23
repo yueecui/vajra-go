@@ -19,6 +19,7 @@ WIKITEXT_SYNC_PATH = 'wikitext_sync'
 SKIP_LIST_PATH = 'skip.txt'
 SKIP_SUMMON_ID_LIST_PATH = 'skip_summon.txt'
 SKIP_WEAPON_ID_LIST_PATH = 'skip_weapon.txt'
+SKIP_WEAPON_NOTE_ID_LIST_PATH = 'skip_weapon_note.txt'
 
 SKIP_LOG = 'skip_log.txt'
 

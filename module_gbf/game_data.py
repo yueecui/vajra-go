@@ -16,6 +16,7 @@ def download_game_data(cfg, args):
     # 新流程
     # 武器（补齐英文商店数据）
     gbf_sim.download_weapon_data_v2()
+    gbf_sim.download_weapon_data_v2_note()
 
     # 召唤石（补齐编成数据）
     gbf_sim.download_summon_data_v2()

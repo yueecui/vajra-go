@@ -37,21 +37,25 @@ def update_weapon_tabx(cfg, args):
 
 def generate_weapon_row(weapon_id):
     # 召唤石图鉴数据
-    note_data_jp = load_json(os.path.join(DATA_PATH, 'weapon', 'shop', f'{weapon_id}.json'))['data']
-    note_data_en = load_json(os.path.join(DATA_PATH, 'weapon', 'shop_en', f'{weapon_id}.json'))['data']
+    shop_data_jp = load_json(os.path.join(DATA_PATH, 'weapon', 'shop', f'{weapon_id}.json'))['data']
+    shop_data_en = load_json(os.path.join(DATA_PATH, 'weapon', 'shop_en', f'{weapon_id}.json'))['data']
+    # 图鉴数据可能不存在（例如活动武器之类的）
+    note_data_jp = load_json(os.path.join(DATA_PATH, 'weapon', 'note', f'{weapon_id}.json'))
+    if note_data_jp is not None:
+        note_data_jp = note_data_jp['data']
 
     temp_row = {
-        'name_jp': note_data_jp['name'],
+        'name_jp': shop_data_jp['name'],
         'title_jp': '',
         'series_name': '',
-        'name_en': note_data_en['name'],
+        'name_en': shop_data_en['name'],
         'name_chs': '',
         'tag_title': '',
         'nickname': [],
         'search_nickname': [],
-        'element': -1,
-        'kind': int(note_data_jp['kind']),
-        'rarity': int(note_data_jp['rarity']),
+        'element': note_data_jp is None and -1 or int(note_data_jp['element']),
+        'kind': int(shop_data_jp['kind']),
+        'rarity': int(shop_data_jp['rarity']),
         'category': '',
         'tag': [],
         'release_date': time.strftime("##%Y-%m-%d", time.localtime()),
@@ -63,8 +67,8 @@ def generate_weapon_row(weapon_id):
         'link_jpwiki': '',
         'link_kamigame': '',
         'user_level': -1,
-        'max_hp': int(note_data_jp['max_hp']),
-        'max_atk': int(note_data_jp['max_attack']),
+        'max_hp': int(shop_data_jp['max_hp']),
+        'max_atk': int(shop_data_jp['max_attack']),
         'evo4_hp': 0,
         'evo4_atk': 0,
         'evo5_hp': 0,
@@ -77,12 +81,13 @@ def generate_weapon_row(weapon_id):
     }
 
     for key in ['skill1', 'skill2', 'skill3']:
-        if key in note_data_jp and 'name' in note_data_jp[key]:
-            temp_row['sk_names'].append(note_data_jp[key]['name'].strip())
+        if key in shop_data_jp and 'name' in shop_data_jp[key]:
+            temp_row['sk_names'].append(shop_data_jp[key]['name'].strip())
 
-    # for skill_key in ['skill1', 'skill2', 'skill3']:
-    #     if skill_key in note_data_jp and not (note_data_jp[skill_key] is None):
-    #         temp_row['sk_icon'].append(note_data_jp[skill_key]['image'].strip())
+    if note_data_jp is not None:
+        for skill_key in ['skill1', 'skill2', 'skill3']:
+            if skill_key in note_data_jp and not (note_data_jp[skill_key] is None):
+                temp_row['sk_icon'].append(note_data_jp[skill_key]['image'].strip())
 
     return temp_row
 
@@ -144,13 +149,16 @@ def new_weapon_page(weapon_id):
     page_content_rows = list()
 
     # 召唤石图鉴数据
-    note_data_jp = load_json(os.path.join(DATA_PATH, 'weapon', 'shop', f'{weapon_id}.json'))['data']
-    note_data_en = load_json(os.path.join(DATA_PATH, 'weapon', 'shop_en', f'{weapon_id}.json'))['data']
-    # shop_data = load_json(os.path.join(DATA_PATH, 'weapon', 'shop', f'{weapon_id}.json'))['data']
+    shop_data_jp = load_json(os.path.join(DATA_PATH, 'weapon', 'shop', f'{weapon_id}.json'))['data']
+    shop_data_en = load_json(os.path.join(DATA_PATH, 'weapon', 'shop_en', f'{weapon_id}.json'))['data']
 
-    if not note_data_jp:
+    note_data_jp = load_json(os.path.join(DATA_PATH, 'weapon', 'note', f'{weapon_id}.json'))
+    if note_data_jp is not None:
+        note_data_jp = note_data_jp['data']
+
+    if not shop_data_jp:
         raise Exception(f'武器{weapon_id}的日文数据文件未找到')
-    if not note_data_en:
+    if not shop_data_en:
         raise Exception(f'武器{weapon_id}的英文数据文件未找到')
 
     page_content_rows.append('{{武器信息')
@@ -161,7 +169,7 @@ def new_weapon_page(weapon_id):
     page_content_rows.append('')
 
     # 替换奥义文本
-    charge_attack_find = re.findall(r'(.+?)属性ダメージ\(.+?\)(.*)', note_data_jp['special_skill']['comment'])
+    charge_attack_find = re.findall(r'(.+?)属性ダメージ\(.+?\)(.*)', shop_data_jp['special_skill']['comment'])
 
     if charge_attack_find:
         charge_text = charge_attack_find[0][0]
@@ -185,7 +193,7 @@ def new_weapon_page(weapon_id):
     page_content_rows.append('')
     page_content_rows.append('{{武器奥义|s}}')
     page_content_rows.append('{{武器奥义')
-    page_content_rows.append('|name=' + note_data_jp["special_skill"]["name"])
+    page_content_rows.append('|name=' + shop_data_jp["special_skill"]["name"])
     page_content_rows.append('|name_chs=')
     page_content_rows.append('|desc=' + charge_text)
     page_content_rows.append('|tag=')
@@ -194,41 +202,41 @@ def new_weapon_page(weapon_id):
     page_content_rows.append('')
 
     # 主加护文本
-    if 'skill1' in note_data_jp and type(note_data_jp['skill1']) != list:
+    if 'skill1' in shop_data_jp and type(shop_data_jp['skill1']) != list:
         page_content_rows.append('==技能==')
         page_content_rows.append('')
         page_content_rows.append('{{武器技能|s}}')
         page_content_rows.append('{{武器技能')
-        page_content_rows.append('|name=' + note_data_jp["skill1"]["name"])
+        page_content_rows.append('|name=' + shop_data_jp["skill1"]["name"])
         page_content_rows.append('|name_chs=')
-        if note_data_jp['skill1']['masterable_level'] != '1':
-            page_content_rows.append('|learn=' + note_data_jp['skill1']['masterable_level'])
-        page_content_rows.append('|icon=')
-        page_content_rows.append('|desc=' + note_data_jp["skill1"]["comment"])
+        if shop_data_jp['skill1']['masterable_level'] != '1':
+            page_content_rows.append('|learn=' + shop_data_jp['skill1']['masterable_level'])
+        page_content_rows.append('|icon=' + note_data_jp is None and '' or note_data_jp['skill1']['image'])
+        page_content_rows.append('|desc=' + shop_data_jp["skill1"]["comment"])
         page_content_rows.append('|use_desc=no')
         page_content_rows.append('|tag=')
         page_content_rows.append('}}')
 
-        if 'skill2' in note_data_jp and type(note_data_jp['skill2']) != list:
+        if 'skill2' in shop_data_jp and type(shop_data_jp['skill2']) != list:
             page_content_rows.append('{{武器技能')
-            page_content_rows.append('|name=' + note_data_jp["skill2"]["name"])
+            page_content_rows.append('|name=' + shop_data_jp["skill2"]["name"])
             page_content_rows.append('|name_chs=')
-            if note_data_jp['skill2']['masterable_level'] != '1':
-                page_content_rows.append('|learn=' + note_data_jp['skill2']['masterable_level'])
-            page_content_rows.append('|icon=')
-            page_content_rows.append('|desc=' + note_data_jp["skill2"]["comment"])
+            if shop_data_jp['skill2']['masterable_level'] != '1':
+                page_content_rows.append('|learn=' + shop_data_jp['skill2']['masterable_level'])
+            page_content_rows.append('|icon=' + note_data_jp is None and '' or note_data_jp['skill2']['image'])
+            page_content_rows.append('|desc=' + shop_data_jp["skill2"]["comment"])
             page_content_rows.append('|use_desc=no')
             page_content_rows.append('|tag=')
             page_content_rows.append('}}')
 
-        if 'skill3' in note_data_jp and type(note_data_jp['skill3']) != list:
+        if 'skill3' in shop_data_jp and type(shop_data_jp['skill3']) != list:
             page_content_rows.append('{{武器技能')
-            page_content_rows.append('|name=' + note_data_jp["skill3"]["name"])
+            page_content_rows.append('|name=' + shop_data_jp["skill3"]["name"])
             page_content_rows.append('|name_chs=')
-            if note_data_jp['skill3']['masterable_level'] != '1':
-                page_content_rows.append('|learn=' + note_data_jp['skill3']['masterable_level'])
-            page_content_rows.append('|icon=')
-            page_content_rows.append('|desc=' + note_data_jp["skill3"]["comment"])
+            if shop_data_jp['skill3']['masterable_level'] != '1':
+                page_content_rows.append('|learn=' + shop_data_jp['skill3']['masterable_level'])
+            page_content_rows.append('|icon=' + note_data_jp is None and '' or note_data_jp['skill3']['image'])
+            page_content_rows.append('|desc=' + shop_data_jp["skill3"]["comment"])
             page_content_rows.append('|use_desc=no')
             page_content_rows.append('|tag=')
             page_content_rows.append('}}')
