@@ -77,17 +77,18 @@ def generate_weapon_row(weapon_id):
         'max_evo': 3,
         'is_archaic': False,
         'sk_icon': [],
-        'sk_names': [],
+        'sk_name': [],
     }
-
-    for key in ['skill1', 'skill2', 'skill3']:
-        if key in shop_data_jp and 'name' in shop_data_jp[key]:
-            temp_row['sk_names'].append(shop_data_jp[key]['name'].strip())
 
     if note_data_jp is not None:
         for skill_key in ['skill1', 'skill2', 'skill3']:
             if skill_key in note_data_jp and not (note_data_jp[skill_key] is None):
                 temp_row['sk_icon'].append(note_data_jp[skill_key]['image'].strip())
+                temp_row['sk_name'].append(note_data_jp[skill_key]['name'].strip())
+    else:
+        for key in ['skill1', 'skill2', 'skill3']:
+            if key in shop_data_jp and 'name' in shop_data_jp[key]:
+                temp_row['sk_name'].append(shop_data_jp[key]['name'].strip())
 
     return temp_row
 
@@ -201,42 +202,43 @@ def new_weapon_page(weapon_id):
     page_content_rows.append('{{武器奥义|e}}')
     page_content_rows.append('')
 
-    # 主加护文本
-    if 'skill1' in shop_data_jp and type(shop_data_jp['skill1']) != list:
+    # 技能
+    skill_data = note_data_jp is None and shop_data_jp or note_data_jp
+    if 'skill1' in skill_data and skill_data['skill1'] is not None and type(skill_data['skill1']) != list:
         page_content_rows.append('==技能==')
         page_content_rows.append('')
         page_content_rows.append('{{武器技能|s}}')
         page_content_rows.append('{{武器技能')
-        page_content_rows.append('|name=' + shop_data_jp["skill1"]["name"])
+        page_content_rows.append('|name=' + skill_data["skill1"]["name"])
         page_content_rows.append('|name_chs=')
-        if shop_data_jp['skill1']['masterable_level'] != '1':
-            page_content_rows.append('|learn=' + shop_data_jp['skill1']['masterable_level'])
-        page_content_rows.append('|icon=' + note_data_jp is None and '' or note_data_jp['skill1']['image'])
-        page_content_rows.append('|desc=' + shop_data_jp["skill1"]["comment"])
+        if skill_data['skill1']['masterable_level'] != '1':
+            page_content_rows.append('|learn=' + skill_data['skill1']['masterable_level'])
+        page_content_rows.append('|icon=' + ('image' in skill_data['skill1'] and skill_data['skill1']['image'] or ''))
+        page_content_rows.append('|desc=' + skill_data["skill1"]["comment"])
         page_content_rows.append('|use_desc=no')
         page_content_rows.append('|tag=')
         page_content_rows.append('}}')
 
-        if 'skill2' in shop_data_jp and type(shop_data_jp['skill2']) != list:
+        if 'skill2' in skill_data and skill_data['skill2'] is not None and type(skill_data['skill2']) != list:
             page_content_rows.append('{{武器技能')
-            page_content_rows.append('|name=' + shop_data_jp["skill2"]["name"])
+            page_content_rows.append('|name=' + skill_data["skill2"]["name"])
             page_content_rows.append('|name_chs=')
-            if shop_data_jp['skill2']['masterable_level'] != '1':
-                page_content_rows.append('|learn=' + shop_data_jp['skill2']['masterable_level'])
-            page_content_rows.append('|icon=' + note_data_jp is None and '' or note_data_jp['skill2']['image'])
-            page_content_rows.append('|desc=' + shop_data_jp["skill2"]["comment"])
+            if skill_data['skill2']['masterable_level'] != '1':
+                page_content_rows.append('|learn=' + skill_data['skill2']['masterable_level'])
+            page_content_rows.append('|icon=' + ('image' in skill_data['skill2'] and skill_data['skill2']['image'] or ''))
+            page_content_rows.append('|desc=' + skill_data["skill2"]["comment"])
             page_content_rows.append('|use_desc=no')
             page_content_rows.append('|tag=')
             page_content_rows.append('}}')
 
-        if 'skill3' in shop_data_jp and type(shop_data_jp['skill3']) != list:
+        if 'skill3' in skill_data and skill_data['skill3'] is not None and type(skill_data['skill3']) != list:
             page_content_rows.append('{{武器技能')
-            page_content_rows.append('|name=' + shop_data_jp["skill3"]["name"])
+            page_content_rows.append('|name=' + skill_data["skill3"]["name"])
             page_content_rows.append('|name_chs=')
-            if shop_data_jp['skill3']['masterable_level'] != '1':
-                page_content_rows.append('|learn=' + shop_data_jp['skill3']['masterable_level'])
-            page_content_rows.append('|icon=' + note_data_jp is None and '' or note_data_jp['skill3']['image'])
-            page_content_rows.append('|desc=' + shop_data_jp["skill3"]["comment"])
+            if skill_data['skill3']['masterable_level'] != '1':
+                page_content_rows.append('|learn=' + skill_data['skill3']['masterable_level'])
+            page_content_rows.append('|icon=' + ('image' in skill_data['skill3'] and skill_data['skill3']['image'] or ''))
+            page_content_rows.append('|desc=' + skill_data["skill3"]["comment"])
             page_content_rows.append('|use_desc=no')
             page_content_rows.append('|tag=')
             page_content_rows.append('}}')
