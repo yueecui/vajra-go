@@ -53,7 +53,7 @@ def generate_weapon_row(weapon_id):
         'tag_title': '',
         'nickname': [],
         'search_nickname': [],
-        'element': note_data_jp is None and -1 or int(note_data_jp['element']),
+        'element': note_data_jp is None and -1 or int(note_data_jp.get('attribute') or note_data_jp.get('element') or -1),
         'kind': int(shop_data_jp['kind']),
         'rarity': int(shop_data_jp['rarity']),
         'category': '',
