@@ -16,7 +16,7 @@ DOWNLOAD_TYPE = {
 
 def download_data_image(cfg, args):
     cfg['wiki'] = HuijiWiki('gbf')
-    cfg['base_url'] = 'http://game-a.granbluefantasy.jp/assets/img/sp/'
+    cfg['base_url'] = 'https://game-a.granbluefantasy.jp/assets/img/sp/'
 
     if args.img_type == 'all':
         for img_type, download_fun in DOWNLOAD_TYPE.items():

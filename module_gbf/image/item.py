@@ -20,7 +20,7 @@ def item(cfg):
 
     # 先检查本地
     data_base_path = os.path.join(IMAGE_PATH, 'item')
-    image_base_url = r'http://game-a.granbluefantasy.jp/assets/img/sp/assets/item/'
+    image_base_url = r'https://game-a.granbluefantasy.jp/assets/img/sp/assets/item/'
 
     # 配置下载器
     downloader = Downloader()

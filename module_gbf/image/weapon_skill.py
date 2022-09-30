@@ -26,7 +26,7 @@ def weapon_skill(cfg):
     # 数据循环
     gbf_sim = GBFSim(cfg)
     data_base_path = os.path.join(DATA_PATH, 'weapon', 'jp')
-    image_base_url = 'http://game-a.granbluefantasy.jp/assets_en/img/sp/ui/icon/skill/'
+    image_base_url = 'https://game-a.granbluefantasy.jp/assets_en/img/sp/ui/icon/skill/'
 
     for weapon_id in gbf_sim.all_weapon():
         weapon_json_path = os.path.join(data_base_path, f'{weapon_id}.json')

@@ -10,7 +10,7 @@ from config import *
 from module_gbf.data.gbf_chrome_cookies import get_game_cookies_v2
 from config import SKIP_WEAPON_NOTE_ID_LIST_PATH, DATA_PATH
 
-GAME_HOST = 'http://game.granbluefantasy.jp'
+GAME_HOST = 'https://game.granbluefantasy.jp'
 
 
 class GBFSim:
@@ -26,6 +26,7 @@ class GBFSim:
 
         # 初始化本地数据
         self._init_local_db()
+        requests.packages.urllib3.disable_warnings()
         self._save_statistics()  # 备份一个输出文件
 
     # GET 请求
@@ -64,8 +65,8 @@ class GBFSim:
             'Accept-Encoding': 'gzip, deflate',
             'Accept-Language': 'zh-CN,zh;q=0.9,zh-TW;q=0.8,en-US;q=0.7,en;q=0.6',
             'Host': 'game.granbluefantasy.jp',
-            'Origin': 'http://game.granbluefantasy.jp',
-            'Referer': 'http://game.granbluefantasy.jp/',
+            'Origin': 'https://game.granbluefantasy.jp',
+            'Referer': 'https://game.granbluefantasy.jp/',
             'User-Agent': self._cfg['SIM']['user_agent'],
         }
         if rtype == 'get_api':
@@ -121,7 +122,7 @@ class GBFSim:
     # 2 英语
     def _set_language(self, lang=1):
         timestamp_a, timestamp_b = get_double_timestamp()
-        request_url = f'http://game.granbluefantasy.jp/setting/save?_={timestamp_a}&t={timestamp_b}&uid={self._user_id}'
+        request_url = f'https://game.granbluefantasy.jp/setting/save?_={timestamp_a}&t={timestamp_b}&uid={self._user_id}'
         data = {
             "special_token": None,
             "language_type": lang,
@@ -512,7 +513,7 @@ class GBFSim:
 
     def _request_weapon_detail(self, weapon_id):
         timestamp_a, timestamp_b = get_double_timestamp()
-        request_url = f'http://game.granbluefantasy.jp/archive/weapon_detail?_={timestamp_a}&t={timestamp_b}&uid={self._user_id}'
+        request_url = f'https://game.granbluefantasy.jp/archive/weapon_detail?_={timestamp_a}&t={timestamp_b}&uid={self._user_id}'
         data = {
             "special_token": None,
             "user_id": self._user_id,
@@ -774,7 +775,7 @@ class GBFSim:
 
     def _request_summon_detail(self, summon_id):
         timestamp_a, timestamp_b = get_double_timestamp()
-        request_url = f'http://game.granbluefantasy.jp/archive/summon_detail?_={timestamp_a}&t={timestamp_b}&uid={self._user_id}'
+        request_url = f'https://game.granbluefantasy.jp/archive/summon_detail?_={timestamp_a}&t={timestamp_b}&uid={self._user_id}'
         data = {
             "special_token": None,
             "user_id": self._user_id,
@@ -815,7 +816,7 @@ class GBFSim:
 
     def _request_summon_supporter(self, summon_id, uncap_lv):
         timestamp_a, timestamp_b = get_double_timestamp()
-        request_url = f'http://game.granbluefantasy.jp/summon/summon_supporter/{summon_id}/{uncap_lv}?_={timestamp_a}&t={timestamp_b}&uid={self._user_id}'
+        request_url = f'https://game.granbluefantasy.jp/summon/summon_supporter/{summon_id}/{uncap_lv}?_={timestamp_a}&t={timestamp_b}&uid={self._user_id}'
         return self._get(request_url, rtype='get_api')
 
     def _get_summon_final_uncap_list(self):
@@ -837,7 +838,7 @@ class GBFSim:
 
     def _get_summon_final_uncap_list_by_page(self, page_index):
         timestamp_a, timestamp_b = get_double_timestamp()
-        request_url = f'http://game.granbluefantasy.jp/summon/list_supporter/{page_index}?_={timestamp_a}&t={timestamp_b}&uid={self._user_id}'
+        request_url = f'https://game.granbluefantasy.jp/summon/list_supporter/{page_index}?_={timestamp_a}&t={timestamp_b}&uid={self._user_id}'
         data = {
             "evolution_step": "3",
             "is_new": False,
@@ -998,7 +999,7 @@ class GBFSim:
 
     def _request_shop_detail(self, item_id, item_kind):
         timestamp_a, timestamp_b = get_double_timestamp()
-        request_url = f'http://game.granbluefantasy.jp/result/detail?_={timestamp_a}&t={timestamp_b}&uid={self._user_id}'
+        request_url = f'https://game.granbluefantasy.jp/result/detail?_={timestamp_a}&t={timestamp_b}&uid={self._user_id}'
         data = {
             "special_token": None,
             "item_id": str(item_id),
@@ -1009,7 +1010,7 @@ class GBFSim:
 
     def _request_weapon_note(self, weapon_id):
         timestamp_a, timestamp_b = get_double_timestamp()
-        request_url = f'http://game.granbluefantasy.jp/archive/weapon_detail?_={timestamp_a}&t={timestamp_b}&uid={self._user_id}'
+        request_url = f'https://game.granbluefantasy.jp/archive/weapon_detail?_={timestamp_a}&t={timestamp_b}&uid={self._user_id}'
         data = {
             "attribute": "0",
             "event_id": None,

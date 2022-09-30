@@ -8,7 +8,7 @@ from module_huiji.danteng_lib import log
 from module_gbf.data.gbf_chrome_cookies import get_game_cookies_v2
 
 
-GAME_HOST = 'http://game.granbluefantasy.jp'
+GAME_HOST = 'https://game.granbluefantasy.jp'
 
 
 # 获取2个有间隔的时间戳
@@ -90,8 +90,8 @@ class GBFSim:
             'Accept-Encoding': 'gzip, deflate',
             'Accept-Language': 'zh-CN,zh;q=0.9,zh-TW;q=0.8,en-US;q=0.7,en;q=0.6',
             'Host': 'game.granbluefantasy.jp',
-            'Origin': 'http://game.granbluefantasy.jp',
-            'Referer': 'http://game.granbluefantasy.jp/',
+            'Origin': 'https://game.granbluefantasy.jp',
+            'Referer': 'https://game.granbluefantasy.jp/',
             'User-Agent': self._cfg['SIM']['user_agent'],
         }
         if rtype == 'get_api':
@@ -125,7 +125,7 @@ class GBFSim:
             raise Exception('切换语言时出错：%s' % result['status_code'])
 
     def _set_language(self, lang=1):
-        request_url = f'http://game.granbluefantasy.jp/setting/save'
+        request_url = f'https://game.granbluefantasy.jp/setting/save'
         data = {
             "special_token": None,
             "language_type": lang,
