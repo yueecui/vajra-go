@@ -176,7 +176,10 @@ def new_weapon_page(weapon_id):
         charge_text = charge_attack_find[0][0]
         if charge_text == '武器':
             charge_text = '未知'
-        charge_text = f'对敌方单体造成{ELEMENT_JP_TO_CHS[charge_text]}属性伤害'
+        if charge_text in ELEMENT_JP_TO_CHS:
+            charge_text = f'对敌方单体造成{ELEMENT_JP_TO_CHS[charge_text]}属性伤害'
+        else:
+            charge_text = f'对敌方单体造成{charge_text}属性伤害'
 
         if charge_attack_find[0][1] != '':
             extra_text = charge_attack_find[0][1]
