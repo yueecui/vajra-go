@@ -45,7 +45,7 @@ def skill(cfg):
     downloader = Downloader()
     downloader.set_try_count(retry_times)
 
-    # https://game-a.granbluefantasy.jp/assets/img/sp/
+    # https://prd-game-a-granbluefantasy.akamaized.net/assets/img/sp/
     # ui/icon/ability/m/17_1.png
     skill_base_url = cfg['base_url'] + 'ui/icon/ability/m/'
 

@@ -1,3 +1,4 @@
+from config import GBF_CDN_URL
 from module_gbf.image import *
 from module_huiji.huijiWiki import HuijiWiki
 
@@ -16,7 +17,7 @@ DOWNLOAD_TYPE = {
 
 def download_data_image(cfg, args):
     cfg['wiki'] = HuijiWiki('gbf')
-    cfg['base_url'] = 'https://prd-game-a-granbluefantasy.akamaized.net/assets/img/sp/'
+    cfg['base_url'] = f'{GBF_CDN_URL}/assets/img/sp/'
 
     if args.img_type == 'all':
         for img_type, download_fun in DOWNLOAD_TYPE.items():

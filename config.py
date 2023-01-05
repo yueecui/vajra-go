@@ -1,3 +1,6 @@
+# CDN URL
+GBF_CDN_URL = 'https://prd-game-a-granbluefantasy.akamaized.net'
+
 # 图片保存目录
 IMAGE_PATH = 'IMAGE'
 IMAGE_NEW_PATH = 'new'
