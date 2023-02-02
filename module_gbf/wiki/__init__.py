@@ -4,3 +4,4 @@ from .item import update_item_tabx, update_item_auto_db
 from .character import update_character_auto_db
 from .leader import update_leader_auto_db
 from .skin import update_skin_auto_db
+from .anime import merge_anime_excel,check_anime_file,update_anime_page
