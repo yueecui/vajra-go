@@ -30,6 +30,10 @@ def gbf_wiki_page_updater(cfg, args):
         update_leader_auto_db(cfg, args)
     elif args.command == 'skin':
         update_skin_auto_db(cfg, args)
+    elif args.command == 'anime':
+        merge_anime_excel(cfg, args)
+        check_anime_file(cfg, args)
+        update_anime_page(cfg, args)
     elif args.command == 'autodb':
         update_summon_auto_db(cfg, args)
         update_weapon_auto_db(cfg, args)
