@@ -58,6 +58,10 @@ def main():
     extract_parser = subparsers.add_parser('gacha', help='gacha data update to wiki')
     extract_parser.set_defaults(callback=update_shabi)
 
+    extract_parser = subparsers.add_parser('uplist', help='gacha uplist data update to wiki')
+    extract_parser.set_defaults(callback=update_gachauplist)
+
+
     # 上传图片
     extract_parser = subparsers.add_parser('upload', help='upload all image')
     extract_parser.add_argument('path', type=str)
