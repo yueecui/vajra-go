@@ -32,6 +32,8 @@ IMG_CONFIG = [
     {'name': '皮肤大图标', 'prefix': 'm', 'suffix': 'jpg', 'prefix_url': '', 'no_sex': True, 'skin_has': True, 'job_has':False, 'has_01': True},
     {'name': '皮肤小图标', 'prefix': 's', 'suffix': 'jpg', 'prefix_url': '', 'no_sex': True, 'skin_has': True, 'job_has':False, 'has_01': True},
     {'name': '职业小图标', 'prefix': 's', 'suffix': 'jpg', 'prefix_url': '', 'no_sex': True, 'skin_has': False, 'job_has':True, 'has_01': True},
+    {'name': '职业大图标', 'prefix': 'm', 'suffix': 'jpg', 'prefix_url': '', 'no_sex': True, 'skin_has': False,
+     'job_has': True, 'has_01': True},
     {'name': '皮肤预览图', 'prefix': 'skin', 'suffix': 'png', 'prefix_url': '', 'no_sex': True, 'skin_has': True, 'job_has':False, 'has_01': True},
 ]
 
