@@ -196,30 +196,47 @@ def new_summon_page(summon_id):
     page_content_rows.append('')
 
     # 主加护文本
-    main_aura_text = ['{{Evo|0}} ' + note_data_jp["skill1"]["comment"]]
+    main_aura_name = ''
+    main_aura_text = []
+    # 有skill1的是旧数据
+    if 'skill1' in note_data_jp:
+        main_aura_name = note_data_jp["skill1"]["name"]
+        main_aura_text.append('{{Evo|0}} ' + note_data_jp["skill1"]["comment"])
+    elif 'skill' in note_data_jp:
+        main_aura_name = note_data_jp["skill"][0]["name"]
+        main_aura_text.append('{{Evo|0}} ' + note_data_jp["skill"][0]["comment"])
+    else:
+        print(f'召唤石{summon_id}的note数据有意料外的格式')
     if uncap_data_jp:
         main_aura_text.append('<br>{{Evo|3}} ' + uncap_data_jp["skill"]["comment"])
     if final_uncap_data_jp:
         main_aura_text.append('<br>{{Evo|4}} ' + final_uncap_data_jp["skill"]["comment"])
 
+    sub_aura_name = ''
     sub_aura_text = []
     has_sub = False
     if 'sub_skill' in note_data_jp:
         has_sub = True
-        sub_aura_text.append('{{Evo|0}} ' + note_data_jp["sub_skill"]["comment"])
+        # 旧数据时是一个object，新的是一个object array
+        if 'comment' in note_data_jp["sub_skill"]:
+            sub_aura_name = note_data_jp["sub_skill"]["name"]
+            sub_aura_text.append('{{Evo|0}} ' + note_data_jp["sub_skill"]["comment"])
+        else:
+            sub_aura_name = note_data_jp["sub_skill"][0]["name"]
+            sub_aura_text.append('{{Evo|0}} ' + note_data_jp["sub_skill"][0]["comment"])
         if uncap_data_jp:
             sub_aura_text.append('<br>{{Evo|3}} ' + uncap_data_jp["sub_skill"]["comment"])
         if final_uncap_data_jp:
             sub_aura_text.append('<br>{{Evo|4}} ' + final_uncap_data_jp["sub_skill"]["comment"])
 
-    page_content_rows.append(f'=={{{{召唤石标题|加护|{note_data_jp["skill1"]["name"]}}}}}==')
+    page_content_rows.append(f'=={{{{召唤石标题|加护|{main_aura_name}}}}}==')
     page_content_rows.append('')
 
     if has_sub:
         page_content_rows.append('===主召时===')
 
     page_content_rows.append('{{召唤加护')
-    page_content_rows.append('|name=' + note_data_jp["skill1"]["name"])
+    page_content_rows.append('|name=' + main_aura_name)
     page_content_rows.append('|name_chs=')
     page_content_rows.append('|desc=' + ''.join(main_aura_text))
     page_content_rows.append('|tag=')
@@ -230,7 +247,7 @@ def new_summon_page(summon_id):
         page_content_rows.append('===副召时===')
 
         page_content_rows.append('{{召唤加护')
-        page_content_rows.append('|name=' + note_data_jp["sub_skill"]["name"])
+        page_content_rows.append('|name=' + sub_aura_name)
         page_content_rows.append('|name_chs=')
         page_content_rows.append('|desc=' + ''.join(sub_aura_text))
         page_content_rows.append('|tag=')
@@ -253,7 +270,8 @@ def update_summon_auto_db(cfg, args):
     for item_id, item_info in item_tabx.get_all_data().items():
         if item_id == 0:
             continue
-        item_db_auto[item_id] = item_info['tag_title'] if item_info['tag_title'] else (item_info['name_chs'] if item_info['name_chs'] else item_info['name_jp'])
+        item_db_auto[item_id] = item_info['tag_title'] if item_info['tag_title'] else (
+            item_info['name_chs'] if item_info['name_chs'] else item_info['name_jp'])
 
     output = []
 
