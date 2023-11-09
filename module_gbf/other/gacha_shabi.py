@@ -169,7 +169,7 @@ def get_normal_shabi_content(sub_gacha_info):
             raise Exception(f'预料外的抽奖类型：{category_info["category"]}')
         sub_gacha_text_array.append(
             f'|{category_name}={",".join([str(item["reward_id"]) for item in category_info["item"]])}')
-    sub_gacha_text_array.append('}}')
+    # sub_gacha_text_array.append('}}')
 
     return sub_gacha_text_array
 
