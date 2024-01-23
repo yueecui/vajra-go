@@ -56,6 +56,8 @@ def weapon(cfg):
                     img_name_list = ['%s_1' % img_base_name, '%s_2' % img_base_name]
                 else:
                     img_name_list = [img_base_name]
+            elif weapon_info['has_transcendence'] == True:
+                img_name_list = [img_base_name, '%s_02' % img_base_name, '%s_03' % img_base_name]
             else:
                 img_name_list = [img_base_name]
 
