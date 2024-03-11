@@ -88,20 +88,21 @@ def get_gacha_info(gbf_sim, gacha_id, page_num):
 def get_choice_shabi_info(gbf_sim, gacha):
     result = {}
     for campaign in gacha['campaign_gacha_ids']:
-        payload = json.dumps({
-            "special_token": None,
-            "campaign_id": gacha['campaign_id'],
-            "list_kind": 1,
-            "filter": {},
-            "is_new": False
-        })
-
-        gacha_info = gbf_sim.post(f'https://game.granbluefantasy.jp/rest/gacha/starlegend/choice/lineup_master',
-                                  data_text=payload)
         item_list = []
-        for sub_list in gacha_info['data']['list']:
-            for item in sub_list:
-                item_list.append(item)
+        for kind in [1,2]:
+            payload = json.dumps({
+                "special_token": None,
+                "campaign_id": gacha['campaign_id'],
+                "list_kind": kind,
+                "filter": {},
+                "is_new": False
+            })
+
+            gacha_info = gbf_sim.post(f'https://game.granbluefantasy.jp/rest/gacha/starlegend/choice/lineup_master',
+                                      data_text=payload)
+            for sub_list in gacha_info['data']['list']:
+                for item in sub_list:
+                    item_list.append(item)
         campaign['list'] = item_list
 
         result[campaign['id']] = campaign
