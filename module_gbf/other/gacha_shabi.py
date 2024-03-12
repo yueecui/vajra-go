@@ -89,10 +89,10 @@ def get_choice_shabi_info(gbf_sim, gacha):
     result = {}
     for campaign in gacha['campaign_gacha_ids']:
         item_list = []
-        for kind in [1,2]:
+        for kind in [1, 2]:
             payload = json.dumps({
                 "special_token": None,
-                "campaign_id": gacha['campaign_id'],
+                "campaign_id": campaign['campaign_id'],
                 "list_kind": kind,
                 "filter": {},
                 "is_new": False
