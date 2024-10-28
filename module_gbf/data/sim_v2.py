@@ -140,13 +140,13 @@ class GBFSim:
             raise Exception('获取MYPAGE时出错！')
         mypage_html = result['text']
         # 查找游戏版本号
-        find = re.findall(r'Game.version = "(\d+)";', mypage_html)
+        find = re.findall(r'"version": "(\d+)",', mypage_html)
         if not find or len(find) == 0:
             raise Exception('没有找到游戏版本号，可能需要刷新登录状态')
         self._version = find[0]
 
         # 查找游戏当前语言
-        find = re.findall(r'Game.lang = \'([^\']+)\';', mypage_html)
+        find = re.findall(r'"lang": "(\w+)",', mypage_html)
         if not find:
             log('【注意】没有找到游戏语言')
         else:
@@ -158,7 +158,7 @@ class GBFSim:
                 self._lang = 0
 
         # 查找角色ID
-        find = re.findall(r'Game.userId = (\d+);', mypage_html)
+        find = re.findall(r'"userId": (\d+),', mypage_html)
         if find:
             user_id = int(find[0])
         else:

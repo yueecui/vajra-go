@@ -1,0 +1,7 @@
+1.装这个插件：https://chromewebstore.google.com/detail/get-cookiestxt-locally/cclelndahbckbenkjhflpdbgdldlbecc
+2.打开GBF登录好，然后点这个插件图标，保存cookies，Export Fromat选JSON，Export As到vajrago的工作目录，文件名为cookies.json
+
+
+备注：
+config.ini里的cookies_user没有用了，现在cookies用上面的方法获取，不再通过chrome直接获取。
+user_agent依然有用，需要与chrome同步更新

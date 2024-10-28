@@ -1,6 +1,6 @@
 from browser_cookie3 import ChromiumBased
 import requests
-
+import json
 
 class ChromeGBF(ChromiumBased):
     """Class for Google Chrome"""
@@ -29,12 +29,21 @@ class ChromeGBF(ChromiumBased):
             'osx_key_user': 'Chrome'
         }
 
+        key_file = "C:\\Users\\yueec\\AppData\\Local\\Google\\Chrome\\User Data\\Local State"
+
         super().__init__(browser='Chrome', cookie_file=cookie_file, domain_name=domain_name, key_file=key_file, **args)
 
 
 def get_game_cookies_v2(profile_name="Default"):
     game_cookies = requests.cookies.RequestsCookieJar()
-    for host in ['game.granbluefantasy.jp', '.game.granbluefantasy.jp', '.mobage.jp']:
-        cookies = ChromeGBF(domain_name=host, profile_name=profile_name).load()
-        game_cookies.update(cookies)
+
+    with open('cookies.json', 'r') as f:
+        cookies = json.load(f)
+        for cookie in cookies:
+            game_cookies.set(cookie['name'], cookie['value'], domain=cookie['domain'])
+
+    # for host in ['game.granbluefantasy.jp', '.game.granbluefantasy.jp', '.mobage.jp']:
+    #     cookies = ChromeGBF(domain_name=host, profile_name=profile_name).load()
+    #     game_cookies.update(cookies)
+
     return game_cookies
