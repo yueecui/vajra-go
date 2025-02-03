@@ -53,7 +53,8 @@ def generate_weapon_row(weapon_id):
         'tag_title': '',
         'nickname': [],
         'search_nickname': [],
-        'element': note_data_jp is None and -1 or int(note_data_jp.get('attribute') or note_data_jp.get('element') or -1),
+        'element': note_data_jp is None and -1 or int(
+            note_data_jp.get('attribute') or note_data_jp.get('element') or -1),
         'kind': int(shop_data_jp['kind']),
         'rarity': int(shop_data_jp['rarity']),
         'category': '',
@@ -86,9 +87,14 @@ def generate_weapon_row(weapon_id):
                 temp_row['sk_icon'].append(note_data_jp[skill_key]['image'].strip())
                 temp_row['sk_name'].append(note_data_jp[skill_key]['name'].strip())
     else:
-        for key in ['skill1', 'skill2', 'skill3']:
-            if key in shop_data_jp and 'name' in shop_data_jp[key]:
-                temp_row['sk_name'].append(shop_data_jp[key]['name'].strip())
+        if 'skill' in shop_data_jp:
+            for index in ['1', '2', '3']:
+                if index in shop_data_jp['skill'] and type(shop_data_jp['skill'][index]) != list:
+                    temp_row['sk_name'].append(shop_data_jp['skill'][index]['name'].strip())
+
+        # for key in ['skill1', 'skill2', 'skill3']:
+        #     if key in shop_data_jp and 'name' in shop_data_jp[key]:
+        #         temp_row['sk_name'].append(shop_data_jp[key]['name'].strip())
 
     return temp_row
 
@@ -120,6 +126,8 @@ def update_weapon_page(cfg, args):
     skip_weapon_id_list = get_skip_weapon_id_list()
 
     for weapon_id in gbf_sim.all_weapon():
+        if int(weapon_id) != 1040619900:
+            continue
         if int(weapon_id) in skip_weapon_id_list:
             continue
         page_title = f'Weapon/{weapon_id}'
@@ -207,41 +215,43 @@ def new_weapon_page(weapon_id):
 
     # 技能
     skill_data = note_data_jp is None and shop_data_jp or note_data_jp
-    if 'skill1' in skill_data and skill_data['skill1'] is not None and type(skill_data['skill1']) != list:
+    if '1' in skill_data['skill'] is not None and type(skill_data['skill']['1']) != list:
         page_content_rows.append('==技能==')
         page_content_rows.append('')
         page_content_rows.append('{{武器技能|s}}')
         page_content_rows.append('{{武器技能')
-        page_content_rows.append('|name=' + skill_data["skill1"]["name"])
+        page_content_rows.append('|name=' + skill_data['skill']['1']["name"])
         page_content_rows.append('|name_chs=')
-        if skill_data['skill1']['masterable_level'] != '1':
-            page_content_rows.append('|learn=' + skill_data['skill1']['masterable_level'])
-        page_content_rows.append('|icon=' + ('image' in skill_data['skill1'] and skill_data['skill1']['image'] or ''))
-        page_content_rows.append('|desc=' + skill_data["skill1"]["comment"])
+        if skill_data['skill']['1']['masterable_level'] != '1':
+            page_content_rows.append('|learn=' + skill_data['skill']['1']['masterable_level'])
+        page_content_rows.append('|icon=' + ('image' in skill_data['skill']['1'] and skill_data['skill']['1']['image'] or ''))
+        page_content_rows.append('|desc=' + skill_data['skill']['1']["comment"])
         page_content_rows.append('|use_desc=no')
         page_content_rows.append('|tag=')
         page_content_rows.append('}}')
 
-        if 'skill2' in skill_data and skill_data['skill2'] is not None and type(skill_data['skill2']) != list:
+        if '2' in skill_data['skill'] is not None and type(skill_data['skill']['2']) != list:
             page_content_rows.append('{{武器技能')
-            page_content_rows.append('|name=' + skill_data["skill2"]["name"])
+            page_content_rows.append('|name=' + skill_data['skill']['2']["name"])
             page_content_rows.append('|name_chs=')
-            if skill_data['skill2']['masterable_level'] != '1':
-                page_content_rows.append('|learn=' + skill_data['skill2']['masterable_level'])
-            page_content_rows.append('|icon=' + ('image' in skill_data['skill2'] and skill_data['skill2']['image'] or ''))
-            page_content_rows.append('|desc=' + skill_data["skill2"]["comment"])
+            if skill_data['skill']['2']['masterable_level'] != '1':
+                page_content_rows.append('|learn=' + skill_data['skill']['2']['masterable_level'])
+            page_content_rows.append(
+                '|icon=' + ('image' in skill_data['skill']['2'] and skill_data['skill']['2']['image'] or ''))
+            page_content_rows.append('|desc=' + skill_data['skill']['2']["comment"])
             page_content_rows.append('|use_desc=no')
             page_content_rows.append('|tag=')
             page_content_rows.append('}}')
 
-        if 'skill3' in skill_data and skill_data['skill3'] is not None and type(skill_data['skill3']) != list:
+        if '3' in skill_data['skill'] is not None and type(skill_data['skill']['3']) != list:
             page_content_rows.append('{{武器技能')
-            page_content_rows.append('|name=' + skill_data["skill3"]["name"])
+            page_content_rows.append('|name=' + skill_data['skill']['3']["name"])
             page_content_rows.append('|name_chs=')
-            if skill_data['skill3']['masterable_level'] != '1':
-                page_content_rows.append('|learn=' + skill_data['skill3']['masterable_level'])
-            page_content_rows.append('|icon=' + ('image' in skill_data['skill3'] and skill_data['skill3']['image'] or ''))
-            page_content_rows.append('|desc=' + skill_data["skill3"]["comment"])
+            if skill_data['skill']['3']['masterable_level'] != '1':
+                page_content_rows.append('|learn=' + skill_data['skill']['3']['masterable_level'])
+            page_content_rows.append(
+                '|icon=' + ('image' in skill_data['skill']['3'] and skill_data['skill']['3']['image'] or ''))
+            page_content_rows.append('|desc=' + skill_data['skill']['3']["comment"])
             page_content_rows.append('|use_desc=no')
             page_content_rows.append('|tag=')
             page_content_rows.append('}}')
