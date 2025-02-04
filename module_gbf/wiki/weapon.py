@@ -126,8 +126,6 @@ def update_weapon_page(cfg, args):
     skip_weapon_id_list = get_skip_weapon_id_list()
 
     for weapon_id in gbf_sim.all_weapon():
-        if int(weapon_id) != 1040619900:
-            continue
         if int(weapon_id) in skip_weapon_id_list:
             continue
         page_title = f'Weapon/{weapon_id}'
